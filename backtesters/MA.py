@@ -96,12 +96,9 @@ class MABacktester(object):
             r.append((round(price,2),round(sell_price,2),days))   
         return r
 
-    def plot(self, year = None, figsize=None):
+    def plot(self, start_date=None, end_date=None, figsize=None):
         self._make_sure_has_run()
-        if year is None:
-            temp = self._df
-        else:
-            temp = self._df[year]
+        temp = self._df.loc[start_date:end_date]
         plt.figure(figsize=figsize)
         plt.plot(temp['last'])
         plt.plot(temp['ml'])
@@ -185,7 +182,7 @@ class MABacktester(object):
             series = self._df['strategy_last'].dropna() 
         else:
             series = self._df['last'].dropna() 
-        xs = np.round(np.array(series.values),2)
+        xs = np.round(np.array(series.values),5)
         ds = series.index
         dds = self._max_dd(xs, ds)
         dds.sort()
@@ -242,9 +239,12 @@ class MABacktester(object):
 
         self._df['trade'] = np.where(self._df['stance'] != self._df['stance'].shift(1), 1, 0)
         trades = self._df['trade'].sum()
-        market = ((np.exp(self._df['market'].cumsum()[-1]) ** (1 / years) - 1) * 100)
-        strategy = ((np.exp(self._df['strategy'].cumsum()[-1]) ** (1 / years) - 1) * 100)
+        market = ((np.exp(self._df['market'].cumsum()[-1]) - 1) * 100)
+        market_pa = ((market / 100 + 1) ** (1 / years) - 1) * 100
+        strategy = ((np.exp(self._df['strategy'].cumsum()[-1]) - 1) * 100)
+        strategy_pa = ((strategy / 100 + 1) ** (1 / years) - 1) * 100
         sharpe = math.sqrt(len(self._df)) * np.average(self._df['strategy'].dropna()) / np.std(self._df['strategy'].dropna())
-        self._results = {"Strategy":np.round(strategy,2), "Market":np.round(market,2),"Trades":trades,"Sharpe":np.round(sharpe,2)}
+        self._results = {"Strategy":np.round(strategy,2), "Market":np.round(market,2),"Trades":trades,"Sharpe":np.round(sharpe,2),
+                        "Strategy_pa": np.round(strategy_pa,2), "Market_pa": np.round(market_pa,2), "Years": np.round(years,2)}
         self._has_run = True
 
