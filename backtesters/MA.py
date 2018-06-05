@@ -15,6 +15,7 @@ class MABacktester(object):
     ms: (int) short moving average
     ml: (int) long moving average
     long_only: (boolean) True if the strategy can only go long
+    ema: (boolean) True if you want exponential MA's
     '''
 
     def __init__(self, series, ms=1, ml=10, long_only=False, ema=False):
