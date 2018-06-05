@@ -9,10 +9,12 @@ import seaborn as sns
 
 class MABacktester(object):
     '''Backtest a Moving Average (MA) crossover strategy
-    series: Pandas Series containing a list of closing prices by date
-    ms: int, short moving average
-    ml: int, long moving average
-    long_only: boolean, whether the strategy can only go long
+
+    Parameters:
+    series: (Panda Series) a list of CLOSE prices by date
+    ms: (int) short moving average
+    ml: (int) long moving average
+    long_only: (boolean) True if the strategy can only go long
     '''
 
     def __init__(self, series, ms=1, ml=10, long_only=False, ema=False):
@@ -97,6 +99,8 @@ class MABacktester(object):
         return r
 
     def plot(self, start_date=None, end_date=None, figsize=None):
+        '''Plot of prices, MA's, and indicators for the buy and sell points
+        '''
         self._make_sure_has_run()
         temp = self._df.loc[start_date:end_date]
         plt.figure(figsize=figsize)
@@ -110,7 +114,9 @@ class MABacktester(object):
 
     def plot_heatmap(self, target="strategy", figsize=None):
         '''Draw a heatmap of returns
-        target: string, "strategy" or "market"
+
+        Parameters:
+        target: (string) "strategy" or "market"
         '''
         self._make_sure_has_run()
         if target == "strategy":
@@ -156,9 +162,14 @@ class MABacktester(object):
 
     def _max_dd(self, xs, ds, depth = 5):
         '''
-        create a list of largest drawdowns recursively
-         takes a numpy array of prices (xs) and dates (ds)
-         returns a list of tuples with drawdown size, high and low value, high and low date
+        Create a list of largest drawdowns recursively
+         
+        Parameters:
+        xs: (numpy array) of prices
+        ds: (numpy array) of dates
+         
+        Return:
+        A list of tuples with drawdown size, high and low value, high and low date
         '''
 
         if depth <= 0:
@@ -174,8 +185,13 @@ class MABacktester(object):
 
     def drawdowns(self, target="strategy", cutoff = 25):
         '''Create a list of drawdowns
-        target: string, value is "strategy" or "market"
-        Returns: DataFrame with table of drawdowns
+
+        Parameters:
+        target: (string) set to "strategy" or "market"
+        cutoff: (int) only show drawdowns larger than this, eg 25 is 25%
+
+        Return:
+        DataFrame with a table of drawdowns
         '''
         self._make_sure_has_run()
         if target == "strategy":
