@@ -113,6 +113,12 @@ class MABacktester(object):
         plt.plot(temp['sell'],color='r', linestyle='None', marker='v')
         plt.show()
 
+    def plot_equity_curve(self, start_date=None, end_date=None, figsize=None):
+        '''Plot an equity curve for the strategy versus
+        the market'''
+        self._make_sure_has_run()
+        self._df[['market','strategy']].loc[start_date:end_date].cumsum().apply(np.exp).plot(figsize=figsize)
+
     def plot_heatmap(self, target="strategy", figsize=None):
         '''Draw a heatmap of returns
 
