@@ -225,12 +225,11 @@ class MABacktester(object):
         df['rdays'] = df['recoveryd'] - df['lowd']
         return df[df['dd'] >= cutoff]
 
-    def _run(self):
-        """
-        Runs the strategy and calculates returns and performance
-        This only gets run when needed on a lazy basis
-        """
-        self._df['market'] = np.log(self._df['last'] / self._df['last'].shift(1))
+
+    def _trade_logic(self):
+        '''Implements the trade logic in order to come up with
+        a set of stances
+        '''
 
         if self._ema:
             self._df['ms'] = np.round(self._df['last'].ewm(span=self._ms, adjust=False).mean(),8)
@@ -245,6 +244,17 @@ class MABacktester(object):
         if not self._long_only:
             self._df['stance'] = np.where(self._df['mdiff'] < 0, -1, self._df['stance'])
             self._df['stance'].replace(to_replace=0, method='ffill').values
+
+
+    def _run(self):
+        """
+        Runs the strategy and calculates returns and performance
+        This only gets run when needed on a lazy basis
+        """
+
+        self._trade_logic()
+
+        self._df['market'] = np.log(self._df['last'] / self._df['last'].shift(1))
 
         self._df['buy'] = np.where( (self._df['stance'] != self._df['stance'].shift(1)) & (self._df['stance'] == 1), self._df['last'], np.NAN)
 

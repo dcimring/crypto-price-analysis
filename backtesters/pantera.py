@@ -35,12 +35,10 @@ class PanteraBacktester(MA.MABacktester):
             self._ms, self._ml, self._hold, str(self._ema), str(start_date), str(end_date))
 
 
-    def _run(self):
-        """
-        Runs the strategy and calculates returns and performance
-        This only gets run when needed on a lazy basis
-        """
-        self._df['market'] = np.log(self._df['last'] / self._df['last'].shift(1))
+    def _trade_logic(self):
+        '''Implements the trade logic in order to come up with
+        a set of stances
+        '''
 
         if self._ema:
             self._df['ms'] = np.round(self._df['last'].ewm(span=self._ms, adjust=False).mean(),8)
@@ -75,25 +73,5 @@ class PanteraBacktester(MA.MABacktester):
         
         self._df['stance'] =  self._df['stance2'] # easier than making lots of changes below
 
-        self._df['buy'] = np.where( (self._df['stance'] != self._df['stance'].shift(1)) & (self._df['stance'] == 1), self._df['last'], np.NAN)
 
-        if not self._long_only:
-            self._df['sell'] = np.where( (self._df['stance'] != self._df['stance'].shift(1)) & (self._df['stance'] == -1), self._df['last'], np.NAN)
-        else:
-            self._df['sell'] = np.where( (self._df['stance'] != self._df['stance'].shift(1)) & (self._df['stance'] == 0), self._df['last'], np.NAN)
-
-        self._df['strategy'] = self._df['market'] * self._df['stance'].shift(1) #shift(1) means day before
-        self._df['strategy_last'] = self._df['strategy'].cumsum().apply(np.exp).dropna()
-
-        #years = len(self._df) / 365.25
-        start_date, end_date = self._df.index[0], self._df.index[-1]
-        years = (end_date - start_date).days / 365.25
-
-        self._df['trade'] = np.where(self._df['stance'] != self._df['stance'].shift(1), 1, 0)
-        trades = self._df['trade'].sum()
-        market = ((np.exp(self._df['market'].cumsum()[-1]) ** (1 / years) - 1) * 100)
-        strategy = ((np.exp(self._df['strategy'].cumsum()[-1]) ** (1 / years) - 1) * 100)
-        sharpe = math.sqrt(len(self._df)) * np.average(self._df['strategy'].dropna()) / np.std(self._df['strategy'].dropna())
-        self._results = {"Strategy":np.round(strategy,2), "Market":np.round(market,2),"Trades":trades,"Sharpe":np.round(sharpe,2)}
-        self._has_run = True
-
+    
