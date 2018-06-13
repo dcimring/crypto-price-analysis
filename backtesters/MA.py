@@ -92,16 +92,31 @@ class MABacktester(object):
         buy = self._df['buy'].dropna()
         sell = self._df['sell'].dropna()
         r = []
-        for date, price in buy.iteritems():
+        
+        for date, price in buy.iteritems(): # long trades
             try:
                 sell_price = sell.loc[date:][0] # find next sell
                 sell_date = sell.loc[date:].index[0] # and the date sold
                 days = (sell_date - date).days
-                r.append((round(price,2),round(sell_price,2),days))   
+                r.append((date,"Long",round(price,3),round(sell_price,3),days,sell_price/price-1))   
             except IndexError: # or its the end of the time series
-                r.append((round(price,2),None,None))
+                r.append((date,"Long",round(price,3),None,None,None))
 
-        return r
+        if not self._long_only: # short trades
+            for date, price in sell.iteritems():
+                try:
+                    cover_price = buy.loc[date:][0] # find next sell
+                    cover_date = buy.loc[date:].index[0] # and the date sold
+                    days = (cover_date - date).days
+                    r.append((date,"Short",round(price,3),round(cover_price,3),days,price/cover_price-1))   
+                except IndexError: # or its the end of the time series
+                    r.append((date,"Short",round(price,3),None,None,None))
+
+        df = pd.DataFrame(sorted(r, key = lambda x: x[0]))
+        df.columns = ['Date','Type','Entry','Exit','Days','Profit']
+        df.set_index('Date', inplace=True)
+
+        return df
 
     def plot(self, start_date=None, end_date=None, figsize=None):
         '''Plot of prices, MA's, and indicators for the buy and sell points
