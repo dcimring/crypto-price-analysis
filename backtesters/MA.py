@@ -85,8 +85,7 @@ class MABacktester(object):
         return np.exp(returns.groupby(groupby).sum()) - 1
 
     def trades(self):
-        '''Return a list of tuples containing trade data
-        Each tuple is (buy_price, sell_price, days_held)
+        '''Return a Pandas DataFrame with details of each trade
         '''
         self._make_sure_has_run()
         buy = self._df['buy'].dropna()
