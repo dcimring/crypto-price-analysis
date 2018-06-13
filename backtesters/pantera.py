@@ -63,7 +63,7 @@ class PanteraBacktester(MA.MABacktester):
         crossovers = np.where((self._df['stance'] ==1) & (self._df['stance'].shift(1) == 0))
         for i in crossovers[0]: # for some reason crossovers is a tuple
             if self._df['stance2'].iloc[i] == 0: # make sure we are not long already
-                j = i+self._hold
+                j = i+self._hold + 1 # adding 1 here since dates go from close to close
                 if j > end:
                     j = end
                     reached_the_end = True

@@ -96,7 +96,7 @@ class MABacktester(object):
             try:
                 sell_price = sell.loc[date:][0] # find next sell
                 sell_date = sell.loc[date:].index[0] # and the date sold
-                days = (sell_date - date).days
+                days = (sell_date - date).days #todo - does this need +1?
                 r.append((date,"Long",round(price,3),round(sell_price,3),days,sell_price/price-1))   
             except IndexError: # or its the end of the time series
                 r.append((date,"Long",round(price,3),None,None,None))
@@ -106,7 +106,7 @@ class MABacktester(object):
                 try:
                     cover_price = buy.loc[date:][0] # find next sell
                     cover_date = buy.loc[date:].index[0] # and the date sold
-                    days = (cover_date - date).days
+                    days = (cover_date - date).days #todo - does this need +1?
                     r.append((date,"Short",round(price,3),round(cover_price,3),days,price/cover_price-1))   
                 except IndexError: # or its the end of the time series
                     r.append((date,"Short",round(price,3),None,None,None))
