@@ -112,7 +112,7 @@ class MABacktester(object):
                     r.append((date,"Short",round(price,3),None,None,None))
 
         df = pd.DataFrame(sorted(r, key = lambda x: x[0]))
-        df.columns = ['Date','Type','Entry','Exit','Days','Profit']
+        df.columns = ['Date','Type','Entry','Exit','Days','Return']
         df.set_index('Date', inplace=True)
 
         return df
