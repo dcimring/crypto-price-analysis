@@ -93,10 +93,14 @@ class MABacktester(object):
         sell = self._df['sell'].dropna()
         r = []
         for date, price in buy.iteritems():
-            sell_price = sell.loc[date:][0] # find next sell
-            sell_date = sell.loc[date:].index[0] # and the date sold
-            days = (sell_date - date).days
-            r.append((round(price,2),round(sell_price,2),days))   
+            try:
+                sell_price = sell.loc[date:][0] # find next sell
+                sell_date = sell.loc[date:].index[0] # and the date sold
+                days = (sell_date - date).days
+                r.append((round(price,2),round(sell_price,2),days))   
+            except IndexError: # or its the end of the time series
+                r.append((round(price,2),None,None))
+
         return r
 
     def plot(self, start_date=None, end_date=None, figsize=None):
