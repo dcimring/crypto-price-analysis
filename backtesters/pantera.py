@@ -42,10 +42,6 @@ class PanteraBacktester(MABacktester):
         self._df['mdiff'] = self._df['ms'] - self._df['ml']
         self._df['stance'] = np.where(self._df['mdiff'] >= 0, 1, 0)
 
-        if not self._long_only:
-            self._df['stance'] = np.where(self._df['mdiff'] < 0, -1, self._df['stance'])
-            self._df['stance'].replace(to_replace=0, method='ffill').values
-
         # Logic for holding period
         self._df['stance2'] = 0 
         
