@@ -1,3 +1,5 @@
+import backtester
+reload(backtester)
 import MA
 reload(MA)
 from MA import MABacktester
