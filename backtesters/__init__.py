@@ -6,3 +6,6 @@ from MA import MABacktester
 import pantera
 reload(pantera)
 from pantera import PanteraBacktester
+import RSI
+reload(RSI)
+from RSI import RSIBacktester
