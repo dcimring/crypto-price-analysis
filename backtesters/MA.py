@@ -23,7 +23,7 @@ class MABacktester(Backtester):
         self._ms = ms
         self._ml = ml
         self._ema = ema
-        super().__init__(self,series,long_only=long_only)
+        Backtester.__init__(self,series,long_only=long_only)
 
     def __str__(self):
         return "MA Backtest Strategy (ms=%d, ml=%d, ema=%s, long_only=%s, start=%s, end=%s)" % (
@@ -38,6 +38,15 @@ class MABacktester(Backtester):
     def ms(self):
         self._make_sure_has_run()
         return self._df['ms']
+
+    def plot(self, start_date=None, end_date=None, figsize=None):
+        Backtester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
+        temp = self._df.loc[start_date:end_date]
+        plt.plot(temp['ml'], label='ml')
+        if self._ms > 1:
+            plt.plot(temp['ms'], label='ms')
+        plt.legend()
+        plt.show()
 
 
     def _trade_logic(self):

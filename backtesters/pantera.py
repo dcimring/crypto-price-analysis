@@ -19,7 +19,7 @@ class PanteraBacktester(MABacktester):
 
     def __init__(self, series, ms=1, ml=200, hold=365, ema=False):
         self._hold = hold
-        super().__init__(self,series,ms=ms,ml=ml,long_only=True,ema=ema)
+        MABacktester.__init__(self,series,ms=ms,ml=ml,long_only=True,ema=ema)
 
 
     def __str__(self):

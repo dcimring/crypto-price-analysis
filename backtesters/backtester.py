@@ -110,13 +110,10 @@ class Backtester(object):
         temp = self._df.loc[start_date:end_date]
         plt.figure(figsize=figsize)
         plt.plot(temp['last'], label='Price')
-        plt.plot(temp['ml'], label='ml')
-        if self._ms > 1:
-            plt.plot(temp['ms'], label='ms')
         plt.plot(temp['buy'],color='g', linestyle='None', marker='^')
         plt.plot(temp['sell'],color='r', linestyle='None', marker='v')
-        plt.legend()
-        plt.show()
+        #plt.legend()
+        #plt.show()
 
     def plot_equity_curve(self, start_date=None, end_date=None, figsize=None):
         '''Plot an equity curve for the strategy versus
