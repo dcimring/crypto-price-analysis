@@ -31,9 +31,9 @@ class MABacktester(Backtester):
 
 
     def ml(self):
-        self._make_sure_has_run()
-   
+        self._make_sure_has_run() 
         return self._df['ml']
+
 
     def ms(self):
         self._make_sure_has_run()
