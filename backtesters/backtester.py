@@ -235,7 +235,7 @@ class Backtester(object):
         '''Each concrete class will implement the trade logic here in order to come up with
         a set of stances
         '''
-        pass
+        self._df['stance'] = 1
 
 
     def _run(self):
