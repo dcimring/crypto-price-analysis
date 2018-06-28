@@ -28,11 +28,15 @@ class RSIBacktester(Backtester):
             self._lookback, self._buy_on, self._sell_on, str(self._long_only), str(self._start_date), str(self._end_date))
 
     def plot(self, start_date=None, end_date=None, figsize=None):
-        Backtester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
+        ax = Backtester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
         temp = self._df.loc[start_date:end_date]
         plt.legend()
         plt.show()
+        #plt.subplot(212, sharex=ax)
         temp['RSI'].plot(figsize=(figsize[0],4))
+        plt.hlines(self._buy_on,temp.index[0],temp.index[-1],colors="gray",linestyles="dashed")
+        plt.hlines(self._sell_on,temp.index[0],temp.index[-1],colors="gray",linestyles="dashed")
+        #plt.plot(temp['RSI'])
         plt.show()
 
     def _trade_logic(self):
