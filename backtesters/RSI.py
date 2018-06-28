@@ -28,6 +28,7 @@ class RSIBacktester(Backtester):
             self._lookback, self._buy_on, self._sell_on, str(self._long_only), str(self._start_date), str(self._end_date))
 
     def plot(self, start_date=None, end_date=None, figsize=None):
+        sns.set_style("dark")
         ax = Backtester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
         temp = self._df.loc[start_date:end_date]
         plt.legend()
