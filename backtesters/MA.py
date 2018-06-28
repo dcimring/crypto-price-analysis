@@ -42,6 +42,7 @@ class MABacktester(Backtester):
     def plot(self, start_date=None, end_date=None, figsize=None):
         sns.set_style("white")
         ax = Backtester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
+        ax.set_title(self.__str__(), size=13)
         temp = self._df.loc[start_date:end_date]
         ax.plot(temp['ml'], label='ml')
         if self._ms > 1:

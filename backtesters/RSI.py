@@ -30,15 +30,16 @@ class RSIBacktester(Backtester):
     def plot(self, start_date=None, end_date=None, figsize=None):
         sns.set_style("dark")
         fig, (ax1, ax2) = plt.subplots(nrows=2, sharex=True, figsize=figsize, gridspec_kw = {'height_ratios':[3, 1]})
-        
+        fig.suptitle(self.__str__(), size=13)
+
         Backtester.plot(self,start_date=start_date,end_date=end_date, ax=ax1)
         temp = self._df.loc[start_date:end_date]
         ax1.legend()
         
         ax2.plot(temp['RSI'])
-
         ax2.hlines(self._buy_on,temp.index[0],temp.index[-1],colors="silver",linestyles="dashed")
         ax2.hlines(self._sell_on,temp.index[0],temp.index[-1],colors="silver",linestyles="dashed")
+        ax2.set_ylim(0,100)
         
         plt.tight_layout()
         plt.show()
