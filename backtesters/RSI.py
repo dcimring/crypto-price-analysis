@@ -40,6 +40,7 @@ class RSIBacktester(Backtester):
         ax2.hlines(self._buy_on,temp.index[0],temp.index[-1],colors="silver",linestyles="dashed")
         ax2.hlines(self._sell_on,temp.index[0],temp.index[-1],colors="silver",linestyles="dashed")
         ax2.set_ylim(0,100)
+        ax2.set_ylabel('RSI')
         
         plt.tight_layout()
         plt.show()

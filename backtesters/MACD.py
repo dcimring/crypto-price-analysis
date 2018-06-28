@@ -38,8 +38,10 @@ class MACDBacktester(Backtester):
         temp = self._df.loc[start_date:end_date]
         ax1.legend()
         
-        ax2.plot(temp['MACD'])
-        ax2.plot(temp['signal'])
+        ax2.plot(temp['MACD'],label="MACD")
+        ax2.plot(temp['signal'],label="signal")
+        ax2.set_ylabel('MACD')
+        ax2.legend()
         
         plt.tight_layout()
         plt.show()
