@@ -68,5 +68,5 @@ class MABacktester(Backtester):
 
         if not self._long_only:
             self._df['stance'] = np.where(self._df['mdiff'] < 0, -1, self._df['stance'])
-            self._df['stance'].replace(to_replace=0, method='ffill').values
+        
 
