@@ -31,7 +31,7 @@ class RSIBacktester(Backtester):
         sns.set_style("dark")
         fig, (ax1, ax2) = plt.subplots(nrows=2, sharex=True, figsize=figsize, gridspec_kw = {'height_ratios':[3, 1]})
         
-        Backtester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize, ax=ax1)
+        Backtester.plot(self,start_date=start_date,end_date=end_date, ax=ax1)
         temp = self._df.loc[start_date:end_date]
         ax1.legend()
         
