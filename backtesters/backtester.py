@@ -103,18 +103,21 @@ class Backtester(object):
 
         return df
 
-    def plot(self, start_date=None, end_date=None, figsize=None):
-        '''Plot of prices, MA's, and indicators for the buy and sell points
+    def plot(self, start_date=None, end_date=None, figsize=None, ax=None):
+        '''Plot of prices and the the buy and sell points
+        Stratgies can add their own additional indicators
         '''
         self._make_sure_has_run()
         temp = self._df.loc[start_date:end_date]
-        plt.figure(figsize=figsize)
-        plt.plot(temp['last'], label='Price')
-        plt.plot(temp['buy'],color='g', linestyle='None', marker='^')
-        plt.plot(temp['sell'],color='r', linestyle='None', marker='v')
-        #plt.legend()
-        #plt.show()
-        return plt.gca()
+       
+        if not ax:
+            fig, ax = plt.subplots(figsize=figsize)
+
+        ax.plot(temp['last'], label='Price')
+        ax.plot(temp['buy'],color='g', linestyle='None', marker='^')
+        ax.plot(temp['sell'],color='r', linestyle='None', marker='v')
+        
+        return ax
 
     def plot_equity_curve(self, start_date=None, end_date=None, figsize=None):
         '''Plot an equity curve for the strategy versus
