@@ -114,6 +114,7 @@ class Backtester(object):
         plt.plot(temp['sell'],color='r', linestyle='None', marker='v')
         #plt.legend()
         #plt.show()
+        return plt.gca()
 
     def plot_equity_curve(self, start_date=None, end_date=None, figsize=None):
         '''Plot an equity curve for the strategy versus
@@ -160,7 +161,7 @@ class Backtester(object):
         fig, ax = plt.subplots(figsize=figsize)
         ax = sns.heatmap(returns, ax=ax, annot=True, center=0, annot_kws={"size": 11}, fmt="0.1f",
                          linewidths=0.5, square=True, cbar=False, cmap='RdYlGn', vmin=-100, vmax=100)
-        ax.set_title("Monthly Returns (%)\n", fontsize=14, color="black", fontweight="bold")
+        ax.set_title("Monthly Returns %s (%%)\n" % target.capitalize(), fontsize=14, color="black", fontweight="bold")
         ax.tick_params(axis=u'both', which=u'both',length=0)
         ax.xaxis.label.set_visible(False)
         ax.yaxis.label.set_visible(False)
@@ -267,6 +268,7 @@ class Backtester(object):
         strategy_pa = ((strategy / 100 + 1) ** (1 / years) - 1) * 100
         sharpe = math.sqrt(len(self._df)) * np.average(self._df['strategy'].dropna()) / np.std(self._df['strategy'].dropna())
         self._results = {"Strategy":np.round(strategy,2), "Market":np.round(market,2),"Trades":trades,"Sharpe":np.round(sharpe,2),
-                        "Strategy_pa": np.round(strategy_pa,2), "Market_pa": np.round(market_pa,2), "Years": np.round(years,2)}
+                        "Strategy_pa": np.round(strategy_pa,2), "Market_pa": np.round(market_pa,2), "Years": np.round(years,2),
+                        "Trades_per_month":np.round(trades/years/12,2)}
         self._has_run = True
 
