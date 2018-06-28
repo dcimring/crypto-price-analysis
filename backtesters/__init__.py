@@ -9,3 +9,6 @@ from pantera import PanteraBacktester
 import RSI
 reload(RSI)
 from RSI import RSIBacktester
+import MACD
+reload(MACD)
+from MACD import MACDBacktester
