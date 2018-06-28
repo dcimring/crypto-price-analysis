@@ -34,8 +34,8 @@ class RSIBacktester(Backtester):
         plt.show()
         #plt.subplot(212, sharex=ax)
         temp['RSI'].plot(figsize=(figsize[0],4))
-        plt.hlines(self._buy_on,temp.index[0],temp.index[-1],colors="gray",linestyles="dashed")
-        plt.hlines(self._sell_on,temp.index[0],temp.index[-1],colors="gray",linestyles="dashed")
+        plt.hlines(self._buy_on,temp.index[0],temp.index[-1],colors="silver",linestyles="dashed")
+        plt.hlines(self._sell_on,temp.index[0],temp.index[-1],colors="silver",linestyles="dashed")
         #plt.plot(temp['RSI'])
         plt.show()
 
