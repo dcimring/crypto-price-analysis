@@ -23,7 +23,7 @@ class MACDBacktester(Backtester):
         self._fast=fast
         self._slow=slow
         self._signal=signal
-        Backtester.__init__(self,series,long_only=long_only)
+        siuper(MACDBacktester,self).__init__(series,long_only=long_only)
 
     def __str__(self):
         return "MACD Backtest Strategy (fast=%d, slow=%d, signal=%d, long_only=%s, start=%s, end=%s)" % (

@@ -21,7 +21,7 @@ class RSIBacktester(Backtester):
         self._lookback=lookback
         self._buy_on=buy_on
         self._sell_on=sell_on
-        Backtester.__init__(self,series,long_only=long_only)
+        super(RSIBacktester,self).__init__(series,long_only=long_only)
 
     def __str__(self):
         return "RSI Backtest Strategy (lookback=%d, buy_on=%d, sell_on=%d, long_only=%s, start=%s, end=%s)" % (

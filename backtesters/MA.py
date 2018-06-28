@@ -23,7 +23,7 @@ class MABacktester(Backtester):
         self._ms = ms
         self._ml = ml
         self._ema = ema
-        Backtester.__init__(self,series,long_only=long_only)
+        super(MABacktester,self).__init__(series,long_only=long_only)
 
     def __str__(self):
         return "MA Backtest Strategy (ms=%d, ml=%d, ema=%s, long_only=%s, start=%s, end=%s)" % (
