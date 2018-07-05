@@ -249,6 +249,8 @@ class Backtester(object):
 
         self._df['market'] = np.log(self._df['last'] / self._df['last'].shift(1))
 
+        # If I get a buy trigger today then I can buy at todays close (tomorrow's open) and thus get tomorrow's return
+
         self._df['buy'] = np.where( (self._df['stance'] != self._df['stance'].shift(1)) & (self._df['stance'] == 1), self._df['last'], np.NAN)
 
         if not self._long_only:
