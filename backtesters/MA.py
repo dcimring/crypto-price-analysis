@@ -19,11 +19,16 @@ class MABacktester(Backtester):
     ema: (boolean) True if you want exponential MA's
     '''
 
-    def __init__(self, series, ms=1, ml=10, long_only=False, ema=False):
+    def __init__(self, series, ms=1, ml=10, long_only=False, ema=False, signal_series=None):
         self._ms = ms
         self._ml = ml
         self._ema = ema
         super(MABacktester,self).__init__(series,long_only=long_only)
+        if signal_series is None:
+            self._df['signal'] = series
+        else:
+            self._df['signal'] = signal_series
+            
 
     def __str__(self):
         return "MA Backtest Strategy (ms=%d, ml=%d, ema=%s, long_only=%s, start=%s, end=%s)" % (
@@ -57,11 +62,11 @@ class MABacktester(Backtester):
         '''
 
         if self._ema:
-            self._df['ms'] = np.round(self._df['last'].ewm(span=self._ms, adjust=False).mean(),8)
-            self._df['ml'] = np.round(self._df['last'].ewm(span=self._ml, adjust=False).mean(),8)
+            self._df['ms'] = np.round(self._df['signal'].ewm(span=self._ms, adjust=False).mean(),8)
+            self._df['ml'] = np.round(self._df['signal'].ewm(span=self._ml, adjust=False).mean(),8)
         else:
-            self._df['ms'] = np.round(self._df['last'].rolling(window=self._ms).mean(), 8)
-            self._df['ml'] = np.round(self._df['last'].rolling(window=self._ml).mean(), 8)
+            self._df['ms'] = np.round(self._df['signal'].rolling(window=self._ms).mean(), 8)
+            self._df['ml'] = np.round(self._df['signal'].rolling(window=self._ml).mean(), 8)
 
         self._df['mdiff'] = self._df['ms'] - self._df['ml']
         self._df['stance'] = np.where(self._df['mdiff'] >= 0, 1, 0)
