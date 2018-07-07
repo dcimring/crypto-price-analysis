@@ -12,3 +12,6 @@ from RSI import RSIBacktester
 import MACD
 reload(MACD)
 from MACD import MACDBacktester
+import portfolio
+reload(portfolio)
+from portfolio import PortfolioBacktester

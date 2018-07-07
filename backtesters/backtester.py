@@ -245,6 +245,9 @@ class Backtester(object):
         This only gets run when needed on a lazy basis
         """
 
+        if self._has_run:
+            return
+
         self._trade_logic()
 
         self._df['market'] = np.log(self._df['last'] / self._df['last'].shift(1))
