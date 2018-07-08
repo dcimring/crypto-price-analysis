@@ -15,3 +15,6 @@ from MACD import MACDBacktester
 import portfolio
 reload(portfolio)
 from portfolio import PortfolioBacktester
+import buyifup
+reload(buyifup)
+from buyifup import BuyIfUpBacktester
