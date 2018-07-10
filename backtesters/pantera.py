@@ -39,8 +39,11 @@ class PanteraBacktester(MABacktester):
             self._df['ms'] = np.round(self._df['last'].rolling(window=self._ms).mean(), 8)
             self._df['ml'] = np.round(self._df['last'].rolling(window=self._ml).mean(), 8)
 
+        # Trade should occur when you cross below 200 day MA, then hold for 365 days
+        # There might be multiple trades on at any one time
+
         self._df['mdiff'] = self._df['ms'] - self._df['ml']
-        self._df['stance'] = np.where(self._df['mdiff'] >= 0, 1, 0)
+        self._df['stance'] = np.where(self._df['mdiff'] < 0, 1, 0)
 
         # Logic for holding period
         self._df['stance2'] = 0 
