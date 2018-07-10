@@ -59,10 +59,10 @@ class PanteraBacktester(MABacktester):
                     j = end
                     reached_the_end = True
                 self._df['stance2'].iloc[i:j-1] = 1
-                if not reached_the_end: self._df['stance2'].iloc[j] = 0
+                if not reached_the_end: self._df['stance2'].iloc[j] = 0 # sell at end of hold period
 
         
-        self._df['stance'] =  self._df['stance2'] # easier than making lots of changes elsewhere
+        self._df['stance'] =  self._df['stance2'] # stance2 now contains the correct stance values
 
 
     
