@@ -18,3 +18,6 @@ from portfolio import PortfolioBacktester
 import buyifup
 reload(buyifup)
 from buyifup import BuyIfUpBacktester
+import newhigh
+reload(newhigh)
+from newhigh import NewHighBacktester
