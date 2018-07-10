@@ -228,21 +228,23 @@ class Backtester(object):
 
         # If I get a buy trigger today then I can buy at todays close (tomorrow's open) and thus get tomorrow's return
 
+        # For buy, sell, and trade calculation shift(1) leads to a value of NA for first entry which then differs from 0
+        # This was fixed by doing a fillna(0) after the shift(1)
+
         self._df['buy'] = np.where( (self._df['stance'] != self._df['stance'].shift(1)) & (self._df['stance'] == 1), self._df['last'], np.NAN)
 
         if not self._long_only:
             self._df['sell'] = np.where( (self._df['stance'] != self._df['stance'].shift(1)) & (self._df['stance'] == -1), self._df['last'], np.NAN)
         else:
-            self._df['sell'] = np.where( (self._df['stance'] != self._df['stance'].shift(1)) & (self._df['stance'] == 0), self._df['last'], np.NAN)
+            self._df['sell'] = np.where( (self._df['stance'] != self._df['stance'].shift(1).fillna(0)) & (self._df['stance'] == 0), self._df['last'], np.NAN)
 
         self._df['strategy'] = self._df['market'] * self._df['stance'].shift(1) #shift(1) means day before
         self._df['strategy_last'] = self._df['strategy'].cumsum().apply(np.exp).dropna()
 
-        #years = len(self._df) / 365.25
         start_date, end_date = self._df.index[0], self._df.index[-1]
         years = (end_date - start_date).days / 365.25
 
-        self._df['trade'] = np.where(self._df['stance'] != self._df['stance'].shift(1), 1, 0)
+        self._df['trade'] = np.where(self._df['stance'] != self._df['stance'].shift(1).fillna(0), 1, 0)
         trades = self._df['trade'].sum()
         market = ((np.exp(self._df['market'].cumsum()[-1]) - 1) * 100)
         market_pa = ((market / 100 + 1) ** (1 / years) - 1) * 100
