@@ -210,7 +210,7 @@ class Backtester(object):
         '''Each concrete class will implement the trade logic here in order to come up with
         a set of stances
         '''
-        self._df['stance'] = 1
+        self._df['stance'] = 1 # Default strategy is buy and hold
 
 
     def _run(self):
