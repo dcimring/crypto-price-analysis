@@ -37,32 +37,6 @@ class Backtester(object):
         self._make_sure_has_run()
         return self._results
 
-    def last(self):
-        return self._df['last']
-
-    def strategy_last(self):
-        self._make_sure_has_run()
-        return self._df['strategy_last']
-
-    def strategy_ret(self):
-        self._make_sure_has_run()
-        return self._df['strategy']
-
-    def market_ret(self):
-        self._make_sure_has_run()
-        return self._df['market']     
-
-    def stance(self):
-        self._make_sure_has_run()
-        return self._df['stance']     
-
-    def buy(self):
-        self._make_sure_has_run()
-        return self._df['buy']
-
-    def sell(self):
-        self._make_sure_has_run()
-        return self._df['sell']
 
     def _sum_returns(self, returns, groupby):
         '''
