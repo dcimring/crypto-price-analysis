@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def comparison_chart(first,second,first_label=None,second_label=None, save=False):
+def comparison_chart(first,second,first_label=None,second_label=None):
     sns.set_style('dark')
     fig=plt.figure(figsize=(14,10))
     ax=fig.add_subplot(111, label=first_label)
@@ -23,6 +23,4 @@ def comparison_chart(first,second,first_label=None,second_label=None, save=False
     ax2.tick_params(axis='x', colors="gray")
     ax2.tick_params(axis='y', colors="gray")
     plt.show()
-    if save:
-        fig.savefig(save, dpi=200, bbox_inches='tight')
-    plt.close()
+    return fig
