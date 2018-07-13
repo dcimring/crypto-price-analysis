@@ -242,6 +242,8 @@ class Backtester(object):
         self._df['strategy'] = self._df['market'] * self._df['stance'].shift(1) #shift(1) means day before
         self._df['strategy_last'] = self._df['strategy'].cumsum().apply(np.exp).dropna()
 
+        # since we are using log returns multiplying by -1 for shorts works
+
         start_date, end_date = self._df.index[0], self._df.index[-1]
         years = (end_date - start_date).days / 365.25
 
