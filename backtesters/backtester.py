@@ -253,8 +253,10 @@ class Backtester(object):
         market_pa = ((market / 100 + 1) ** (1 / years) - 1) * 100
         strategy = ((np.exp(self._df['strategy'].cumsum()[-1]) - 1) * 100)
         strategy_pa = ((strategy / 100 + 1) ** (1 / years) - 1) * 100
-        sharpe = math.sqrt(len(self._df)) * np.average(self._df['strategy'].dropna()) / np.std(self._df['strategy'].dropna())
-        market_sharpe = math.sqrt(len(self._df)) * np.average(self._df['market'].dropna()) / np.std(self._df['market'].dropna())
+        # Calculating sharpe using log returns
+        # For daily data you annualise with sqrt(365.25)
+        sharpe = math.sqrt(365.25) * np.average(self._df['strategy'].dropna()) / np.std(self._df['strategy'].dropna())
+        market_sharpe = math.sqrt(365.25) * np.average(self._df['market'].dropna()) / np.std(self._df['market'].dropna())
         self._results = {"Strategy":np.round(strategy,2), "Market":np.round(market,2),"Trades":trades,"Sharpe":np.round(sharpe,2),
                         "Strategy_pa": np.round(strategy_pa,2), "Market_pa": np.round(market_pa,2), "Years": np.round(years,2),
                         "Trades_per_month":np.round(trades/years/12,2),"Market_sharpe":np.round(market_sharpe,2)}
