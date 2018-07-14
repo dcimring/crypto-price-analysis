@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import talib
 from backtester import Backtester
 
 class RSIBacktester(Backtester):
@@ -49,17 +50,20 @@ class RSIBacktester(Backtester):
         '''Implements the trade logic in order to come up with
         a set of stances
         '''
-        delta = self._df['last'].diff()
-        dUp, dDown = delta.copy(), delta.copy()
-        dUp[dUp < 0] = 0
-        dDown[dDown > 0] = 0
+        
+        # delta = self._df['last'].diff()
+        # dUp, dDown = delta.copy(), delta.copy()
+        # dUp[dUp < 0] = 0
+        # dDown[dDown > 0] = 0
 
-        RolUp = dUp.rolling(window=self._lookback).mean()
-        RolDown = dDown.abs().rolling(window=self._lookback).mean()
+        # RolUp = dUp.rolling(window=self._lookback).mean()
+        # RolDown = dDown.abs().rolling(window=self._lookback).mean()
 
-        RS = RolUp / RolDown
-        RSI = 100.0 - (100.0 / (1.0 + RS))
-        self._df['RSI'] = RSI
+        # RS = RolUp / RolDown
+        # RSI = 100.0 - (100.0 / (1.0 + RS))
+        # self._df['RSI'] = RSI
+
+        self._df['RSI'] = talib.RSI(self._df['last'],timeperiod=self._lookback)        
 
         # long when RSI is high, short when it is low, in cash otherwise
         # there are other strategies
