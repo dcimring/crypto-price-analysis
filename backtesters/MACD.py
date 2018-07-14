@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import talib
 from backtester import Backtester
 
 class MACDBacktester(Backtester):
@@ -48,10 +49,14 @@ class MACDBacktester(Backtester):
 
     def _MACD(self):
         '''Calculate the MACD'''
-        self._df['slow'] = self._df['last'].ewm(span=self._slow).mean()
-        self._df['fast'] = self._df['last'].ewm(span=self._fast).mean()
-        self._df['MACD'] = self._df['fast'] - self._df['slow']
-        self._df['signal'] = self._df['MACD'].rolling(window=self._signal).mean()
+
+        # self._df['slow'] = self._df['last'].ewm(span=self._slow).mean()
+        # self._df['fast'] = self._df['last'].ewm(span=self._fast).mean()
+        # self._df['MACD'] = self._df['fast'] - self._df['slow']
+        # self._df['signal'] = self._df['MACD'].rolling(window=self._signal).mean()
+
+        self._df['MACD'], self._df['signal'], self._df['hist'] = talib.MACD(self._df['last'],fastperiod=self._fast,slowperiod=self._slow,signalperiod=self._signal)
+
 
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
