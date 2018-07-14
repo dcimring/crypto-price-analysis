@@ -55,7 +55,8 @@ class MACDBacktester(Backtester):
         # self._df['MACD'] = self._df['fast'] - self._df['slow']
         # self._df['signal'] = self._df['MACD'].rolling(window=self._signal).mean()
 
-        self._df['MACD'], self._df['signal'], self._df['hist'] = talib.MACD(self._df['last'],fastperiod=self._fast,slowperiod=self._slow,signalperiod=self._signal)
+        self._df['MACD'], self._df['signal'], self._df['hist'] = talib.MACD(self._df['last'],fastperiod=self._fast,
+            slowperiod=self._slow,signalperiod=self._signal)
 
 
     def _trade_logic(self):
