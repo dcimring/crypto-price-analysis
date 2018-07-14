@@ -41,6 +41,7 @@ class MACDBacktester(Backtester):
         
         ax2.plot(temp['MACD'],label="MACD")
         ax2.plot(temp['signal'],label="signal")
+        ax2.bar(temp['hist'].index,temp['hist'].values, color='white')
         ax2.set_ylabel('MACD')
         ax2.legend()
         
