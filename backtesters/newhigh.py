@@ -28,6 +28,15 @@ class NewHighBacktester(Backtester):
         return "NewHigh Backtest Strategy (lookback=%d, tolerance =%0.4f, long_only=%s, start=%s, end=%s)" % (
             self._lookback, self._tolerance, str(self._long_only), str(self._start_date), str(self._end_date))
 
+    def plot(self, start_date=None, end_date=None, figsize=None):
+        sns.set_style("white")
+        ax = Backtester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
+        ax.set_title(self.__str__(), size=13)
+        temp = self._df.loc[start_date:end_date]
+        ax.plot(temp['max'] * (1-self._tolerance), label='high')
+        ax.legend()
+        plt.show()
+
 
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
