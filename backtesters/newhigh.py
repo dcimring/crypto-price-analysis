@@ -45,7 +45,10 @@ class NewHighBacktester(Backtester):
 
         self._df['max'] = self._df['last'].rolling(window=self._lookback).max()
 
-        self._df['stance'] = np.where(self._df['last'] >= self._df['max'] * (1-self._tolerance),1, (not self._long_only) * -1)
+        self._df['stance'] = np.where(self._df['last'] >= self._df['max'] * (1-self._tolerance),1,0)
+
+        if not self._long_only:
+            self._df['stance'] = np.where(self._df['last'] < self._df['max'] * (1-self._tolerance), -1, self._df['stance'])
 
 
 
