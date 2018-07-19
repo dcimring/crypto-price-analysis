@@ -69,10 +69,10 @@ class MACDBacktester(Backtester):
         self._MACD()
 
         self._df['mdiff'] = self._df['MACD'] - self._df['signal']
-        self._df['stance'] = np.where(self._df['mdiff'] >= 0, 1, (not self._long_only) * -1)
+        self._df['stance'] = np.where(self._df['mdiff'] >= 0, 1, 0)
 
-        # if not self._long_only:
-        #     self._df['stance'] = np.where(self._df['mdiff'] < 0, -1, self._df['stance'])
+        if not self._long_only:
+            self._df['stance'] = np.where(self._df['mdiff'] < 0, -1, self._df['stance'])
         
 
 
