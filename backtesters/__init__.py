@@ -21,3 +21,6 @@ from buyifup import BuyIfUpBacktester
 import newhigh
 reload(newhigh)
 from newhigh import NewHighBacktester
+import stochastic
+reload(stochastic)
+from stochastic import StochasticBacktester
