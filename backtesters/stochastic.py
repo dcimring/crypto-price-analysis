@@ -19,7 +19,7 @@ class StochasticBacktester(Backtester):
     long_only: (boolean) True if the strategy can only go long
     '''
 
-    def __init__(self, series, high, low, K=5, D=3, smoothe=3, buy_on=60, sell_on=40, long_only=False):
+    def __init__(self, series, high, low, K=5, D=3, smoothe=3, buy_on=20, sell_on=80, long_only=False):
         self._K = K
         self._D = D
         self._buy_on = buy_on
@@ -62,15 +62,31 @@ class StochasticBacktester(Backtester):
 
         self._df['slowk'], self._df['slowd'] = talib.STOCH(self._df['high'], self._df['low'], self._df['last'], fastk_period=self._K, slowk_period=self._smoothe, slowk_matype=0, slowd_period=self._D, slowd_matype=0)
         
-        # self._df['stance'] = np.where(self._df['slowd'] >= self._buy_on,1,0) # long where D is above buy_on
+        # buy when below 20 and K crosses over D
+        # sell when above 80 and K crossed below D
+        
+        current_stance = 0
+        stances = []
 
-        # if not self._long_only:
-        #     self._df['stance'] = np.where(self._df['slowd'] < self._sell_on, -1, self._df['stance'])
+        for index, row in self._df.iterrows():
+            buy_signal = False
+            sell_signal = False
+            if (row['slowd'] < self._buy_on) and (row['slowk'] > row['slowd']):
+                buy_signal = True
+            if (row['slowd'] > self._sell_on) and (row['slowk'] < row['slowd']):
+                sell_signal = True
 
-        self._df['stance'] = np.where(self._df['slowk'] >= self._df['slowd'],1,0) # long where K is above D
+            if current_stance == 0:
+                if buy_signal: current_stance = 1
+            elif current_stance == 1:
+                if sell_signal:
+                    current_stance = 0
+                    if not(self._long_only): current_stance = -1
+            else:
+                if buy_signal: current_stance = 1
+            stances.append(current_stance)
 
-        if not self._long_only:
-            self._df['stance'] = np.where(self._df['slowk'] < self._df['slowd'], -1, self._df['stance'])
+        self._df['stance'] = stances
 
 
 
