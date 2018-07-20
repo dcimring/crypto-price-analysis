@@ -44,6 +44,15 @@ class Backtester(object):
         '''
         return np.exp(returns.groupby(groupby).sum()) - 1
 
+    def _cross_over (self, a, b):
+        '''Returns true where series a crosses over series b'''
+        return ( (a > b) & (a.shift(1) < b.shift(1) ) ) 
+
+    def _cross_under (self, a, b):
+        '''Returns true where series a crosses over series b'''
+        return ( (a < b) & (a.shift(1) > b.shift(1) ) ) 
+
+
     def trades(self):
         '''Return a Pandas DataFrame with details of each trade
         '''
