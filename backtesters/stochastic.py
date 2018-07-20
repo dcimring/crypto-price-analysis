@@ -77,11 +77,15 @@ class StochasticBacktester(Backtester):
                 sell_signal = True
 
             if current_stance == 0:
-                if buy_signal: current_stance = 1
+                if buy_signal:
+                    current_stance = 1
+                    if sell_signal and not self._long_only:
+                        current_stance = -1
             elif current_stance == 1:
                 if sell_signal:
                     current_stance = 0
-                    if not(self._long_only): current_stance = -1
+                    if not self._long_only:
+                        current_stance = -1
             else:
                 if buy_signal: current_stance = 1
             stances.append(current_stance)
