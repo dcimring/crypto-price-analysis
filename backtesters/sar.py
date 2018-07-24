@@ -9,7 +9,8 @@ import seaborn as sns
 import talib
 from backtester import Backtester
 
-# ToDo - instead of lookback use "current trend" (not yet sure how to calculate this)
+# Using daily close when high and low are not avail or are unreliable
+# This seems to work well and visually matches TradingView chart
 
 class SARBacktester(Backtester):
     '''Backtest a strategy which goes long and short based on parabolic SAR
