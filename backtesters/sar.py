@@ -35,7 +35,7 @@ class SARBacktester(Backtester):
         ax = Backtester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
         ax.set_title(self.__str__(), size=13)
         temp = self._df.loc[start_date:end_date]
-        ax.plot(temp['sar'],'.', ms=1, label='sar')
+        ax.plot(temp['sar'],'.', ms=2, label='sar')
         ax.legend()
         plt.show()
 
