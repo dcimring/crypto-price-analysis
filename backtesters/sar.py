@@ -9,8 +9,11 @@ import seaborn as sns
 import talib
 from backtester import Backtester
 
+# ToDo - instead of lookback use "current trend" (not yet sure how to calculate this)
+
 class SARBacktester(Backtester):
     '''Backtest a strategy which goes long and short based on parabolic SAR
+    See https://www.tradingview.com/wiki/Parabolic_SAR_(SAR)
 
     Parameters:
     series: (Panda Series) a list of CLOSE prices by date
