@@ -27,7 +27,7 @@ class SARBacktester(Backtester):
         super(SARBacktester,self).__init__(series,long_only=long_only)
 
     def __str__(self):
-        return "Stochastic Backtest Strategy (lookback=%d, acceleration=%d, maximum=%d, long_only=%s, start=%s, end=%s)" % (
+        return "Parabolic SAR Backtest Strategy (lookback=%d, acceleration=%0.3f, maximum=%0.3f, long_only=%s, start=%s, end=%s)" % (
             self._lookback, self._acceleration, self._maximum, str(self._long_only), str(self._start_date), str(self._end_date))
 
     def plot(self, start_date=None, end_date=None, figsize=None):
@@ -35,7 +35,7 @@ class SARBacktester(Backtester):
         ax = Backtester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
         ax.set_title(self.__str__(), size=13)
         temp = self._df.loc[start_date:end_date]
-        ax.plot(temp['sar'],'o', label='sar')
+        ax.plot(temp['sar'],'.', ms=1, label='sar')
         ax.legend()
         plt.show()
 
@@ -45,9 +45,9 @@ class SARBacktester(Backtester):
         a set of stances
         '''
 
-        self._df['high'] = self._df['Last'].rolling(window=self._lookback).max()  # MAX(close, timeperiod=30)
-        self._df['low'] = self._df['Last'].rolling(window=self._lookback).min()  # low = MIN(close, timeperiod=30)
-        self._df['sar'] = talib.SAR(high, low, acceleration=self._acceleration, maximum=self._maximum)[-1]
+        self._df['high'] = self._df['last'].rolling(window=self._lookback).max()  # MAX(close, timeperiod=30)
+        self._df['low'] = self._df['last'].rolling(window=self._lookback).min()  # low = MIN(close, timeperiod=30)
+        self._df['sar'] = talib.SAR(self._df['high'], self._df['low'], acceleration=self._acceleration, maximum=self._maximum)
 
         self._df['stance'] = np.where(self._df['last'] >= self._df['sar'], 1, 0)
 

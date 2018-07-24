@@ -26,4 +26,4 @@ reload(stochastic)
 from stochastic import StochasticBacktester
 import sar
 reload(sar)
-from sarc import SARBacktester
+from sar import SARBacktester
