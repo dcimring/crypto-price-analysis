@@ -24,3 +24,6 @@ from newhigh import NewHighBacktester
 import stochastic
 reload(stochastic)
 from stochastic import StochasticBacktester
+import sar
+reload(sar)
+from sarc import SARBacktester
