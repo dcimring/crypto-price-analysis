@@ -52,7 +52,7 @@ class MAStopLossBacktester(MABacktester):
         entry_price = None
         current_price = None
         stops = self._df['last'].copy()
-        stops[:] = np.nan
+        stops[:] = np.nan # list of stops to be used for chart
         wait_for_long = False 
 
         for index, row in self._df.iterrows():
