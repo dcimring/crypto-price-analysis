@@ -46,7 +46,6 @@ class MAStopLossBacktester(MABacktester):
         # If I hit a stop loss can I go long the same day? Yes in fact check for go long first in which case stop not needed
         # If a short gets stopped out then wait for next buy before any more shorts
 
-        
         current_stance = 0
         stances = []
         entry_price = None
