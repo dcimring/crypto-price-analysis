@@ -50,11 +50,7 @@ class MABacktester(Backtester):
         ax.legend()
         plt.show()
 
-
-    def _trade_logic(self):
-        '''Implements the trade logic in order to come up with
-        a set of stances
-        '''
+    def _indicators(self):
 
         if self._ema:
             self._df['ms'] = np.round(self._df['last'].ewm(span=self._ms, adjust=False).mean(),8)
@@ -64,6 +60,14 @@ class MABacktester(Backtester):
             self._df['ml'] = np.round(self._df['last'].rolling(window=self._ml).mean(), 8)
 
         self._df['mdiff'] = self._df['ms'] - self._df['ml']
+
+    def _trade_logic(self):
+        '''Implements the trade logic in order to come up with
+        a set of stances
+        '''
+
+        self._indicators()
+        
         self._df['stance'] = np.where(self._df['mdiff'] >= 0, 1, 0)
 
         if not self._long_only:

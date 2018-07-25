@@ -49,7 +49,7 @@ class MACDBacktester(Backtester):
         plt.tight_layout()
         plt.show()
 
-    def _MACD(self):
+    def _indicators(self):
         '''Calculate the MACD'''
 
         # self._df['slow'] = self._df['last'].ewm(span=self._slow).mean()
@@ -66,7 +66,7 @@ class MACDBacktester(Backtester):
         a set of stances
         '''
 
-        self._MACD()
+        self._indicators()
 
         self._df['mdiff'] = self._df['MACD'] - self._df['signal']
         self._df['stance'] = np.where(self._df['mdiff'] >= 0, 1, 0)
