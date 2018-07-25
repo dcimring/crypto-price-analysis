@@ -91,6 +91,7 @@ class MAStopLossBacktester(MABacktester):
 
             # Check for stop loss
             # If we went long above and stop would have trigered today then fine stop was not needed
+            # If we went short today then this won't trigger
              
             if current_stance == -1:
                 if entry_price / current_price <= (1-self._stop_loss):
