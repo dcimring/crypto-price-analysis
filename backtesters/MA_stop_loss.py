@@ -57,12 +57,12 @@ class MAStopLossBacktester(MABacktester):
             
             # Check for stop loss
             if current_stance == -1:
-                if current_price / entry_price >= (1+self._stop_loss):
+                if entry_price / current_price <= (1-self._stop_loss):
                     current_stance = 0 # go to cash
                     stances.append(current_stance)
                     stops.loc[index] = current_price
                     print "Stop loss triggered at %s entry %0.1f exit %0.1f loss %0.1f%%" % (str(index),
-                        entry_price, current_price, (current_price/entry_price-1) * 100)
+                        entry_price, current_price, (entry_price/current_price-1) * 100)
                     entry_price = None
                     continue
 
