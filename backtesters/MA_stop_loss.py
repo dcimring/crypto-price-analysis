@@ -35,10 +35,24 @@ class MAStopLossBacktester(MABacktester):
         
         current_stance = 0
         stances = []
+        entry_price = None
+        current_price = None
 
         for index, row in self._df.iterrows():
+            
+            current_price = row['last']
             buy_signal = False
             sell_signal = False
+            
+            # Check for stop loss
+            if current_stance == -1:
+                if current_price / entry_price <= (1-0.05):
+                    current_stance = 0 # go to cash
+                    stances.append(current_stance)
+                    print "Stop loss triggered at %s entry %0.1f exit %0.1f loss %0.1f%%" % (str(index), entry_price, current_price, (current_price/entry_price-1) * 100)
+                    entry_price = None
+                    continue
+
             if row['mdiff'] >= 0:
                 buy_signal = True
             if row['mdiff'] < 0:
@@ -47,15 +61,24 @@ class MAStopLossBacktester(MABacktester):
             if current_stance == 0:
                 if buy_signal:
                     current_stance = 1
+                    entry_price = current_price
                 if sell_signal and not self._long_only:
                     current_stance = -1
+                    entry_price = current_price
+                    #print "Going short on %s at %0.1f" % (str(index),entry_price)
             elif current_stance == 1:
                 if sell_signal:
                     current_stance = 0
+                    entry_price = None
                     if not self._long_only:
                         current_stance = -1
+                        entry_price = current_price
+                        #print "Going short on %s at %0.1f" % (str(index),entry_price)
             else:
-                if buy_signal: current_stance = 1
+                if buy_signal:
+                    current_stance = 1
+                    entry_price = current_price
+            
             stances.append(current_stance)
 
         self._df['stance'] = stances
