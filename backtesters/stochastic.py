@@ -54,7 +54,6 @@ class StochasticBacktester(Backtester):
         plt.tight_layout()
         plt.show()
 
-
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
         a set of stances
@@ -79,8 +78,8 @@ class StochasticBacktester(Backtester):
             if current_stance == 0:
                 if buy_signal:
                     current_stance = 1
-                    if sell_signal and not self._long_only:
-                        current_stance = -1
+                if sell_signal and not self._long_only:
+                    current_stance = -1
             elif current_stance == 1:
                 if sell_signal:
                     current_stance = 0
