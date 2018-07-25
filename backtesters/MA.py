@@ -39,7 +39,8 @@ class MABacktester(Backtester):
         if self._ms > 1:
             ax.plot(temp['ms'], label='ms')
         ax.legend()
-        plt.show()
+        #plt.show()
+        return ax
 
     def _indicators(self):
 
