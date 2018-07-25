@@ -96,12 +96,11 @@ class MAStopLossBacktester(MABacktester):
             if current_stance == -1:
                 if entry_price / current_price <= (1-self._stop_loss):
                     current_stance = 0 # go to cash
-                    #stances.append(current_stance)
                     stops.loc[index] = current_price
                     print "Stop loss triggered at %s entry %0.2f exit %0.2f loss %0.1f%%" % (str(index),
                         entry_price, current_price, (entry_price/current_price-1) * 100)
                     entry_price = None
-                    wait_for_long = True # If a short gets stopped out then wait for next buy before shorting again
+                    wait_for_long = True # If a short gets stopped out then wait for next long before shorting again
             
             stances.append(current_stance)
 
