@@ -10,12 +10,15 @@ import talib
 from backtester import Backtester
 
 class WilliamsRBacktester(Backtester):
-    '''Backtest a RSI strategy
+    '''Backtest a Williams %R strategy
+    The %R indicator ossolates between -100 and 0.
 
     Parameters:
     series: (Panda Series) a list of CLOSE prices by date
     lookback: (int) lookback period
     long_only: (boolean) True if the strategy can only go long
+    buy_on: (int) Threshhold for buy decisions
+    sell_on: (int) Threshhold for sell decisions
     '''
 
     def __init__(self, series, lookback=14, buy_on=-20, sell_on=-20, long_only=False):
@@ -53,10 +56,6 @@ class WilliamsRBacktester(Backtester):
         '''
         
         self._df['%R'] = talib.WILLR(self._df['last'], self._df['last'], self._df['last'], timeperiod=self._lookback)
-
-        # long when RSI is high, short when it is low, in cash otherwise
-        # there are other strategies
-        # https://tradingsim.com/blog/rsi-relative-strength-index/
 
         self._df['stance'] = np.where(self._df['%R'] >= self._buy_on, 1, 0)
 
