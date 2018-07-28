@@ -30,3 +30,6 @@ from sar import SARBacktester
 import MA_stop_loss
 reload(MA_stop_loss)
 from MA_stop_loss import MAStopLossBacktester
+import williams
+reload(williams)
+from williams import WilliamsRBacktester
