@@ -71,7 +71,7 @@ class PortfolioBacktester(Backtester):
 
         self._trade_logic()
 
-        self._df['strategy_last'] = self._df['strategy'].cumsum().apply(np.exp).dropna()
+        self._df['strategy_last'] = self._df['strategy'].cumsum().apply(np.exp).dropna() # needed for drawdown calculations
 
         # since we are using log returns multiplying by -1 for shorts works
 
