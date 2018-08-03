@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from IPython.core.debugger import set_trace
 
 class Backtester(object):
     '''Abstract base class
@@ -123,6 +124,7 @@ class Backtester(object):
         original_returns = returns.copy()
         returns_index = returns.resample('MS').first().index
         returns_values = self._sum_returns(returns, (returns.index.year, returns.index.month)).values
+        #set_trace()
         returns = pd.DataFrame(index=returns_index, data={'Returns': returns_values})
 
         returns['Year'] = returns.index.strftime('%Y')
