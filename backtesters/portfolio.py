@@ -36,8 +36,8 @@ class PortfolioBacktester(Backtester):
 
         start_dates, end_dates = [],[]
         for s in self._strategies:
-            start_dates.append(s._df.index[0])
-            end_dates.append(s._df.index[-1])
+            start_dates.append(s._df.index[0].replace(tzinfo=None))
+            end_dates.append(s._df.index[-1].replace(tzinfo=None))
 
         self._start_date = min(start_dates)
         self._end_date = max(end_dates)
