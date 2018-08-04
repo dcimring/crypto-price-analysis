@@ -65,21 +65,25 @@ class Backtester(object):
         for date, price in buy.iteritems(): # long trades
             try:
                 sell_price = sell.loc[date:][0] # find next sell
-                sell_date = sell.loc[date:].index[0] # and the date sold
-                days = (sell_date - date).days #todo - does this need +1?
+                sell_date = sell.loc[date:].index[0] # and the date sold 
+            except IndexError: # its the end of the time series
+                sell_price = self._df['last'].iloc[-1] # current price
+                sell_date = self._df['last'].index[-1] # current date
+            finally:
+                days = (sell_date - date).days 
                 r.append((date,"Long",round(price,3),round(sell_price,3),days,sell_price/price-1))   
-            except IndexError: # or its the end of the time series
-                r.append((date,"Long",round(price,3),None,None,None))
 
         if not self._long_only: # short trades
             for date, price in sell.iteritems():
                 try:
                     cover_price = buy.loc[date:][0] # find next sell
-                    cover_date = buy.loc[date:].index[0] # and the date sold
+                    cover_date = buy.loc[date:].index[0] # and the date sold 
+                except IndexError: # its the end of the time series
+                    cover_price = self._df['last'].iloc[-1] # current price
+                    cover_date = self._df['last'].index[-1] # current date
+                finally:
                     days = (cover_date - date).days #todo - does this need +1?
-                    r.append((date,"Short",round(price,3),round(cover_price,3),days,price/cover_price-1))   
-                except IndexError: # or its the end of the time series
-                    r.append((date,"Short",round(price,3),None,None,None))
+                    r.append((date,"Short",round(price,3),round(cover_price,3),days,price/cover_price-1))  
 
         df = pd.DataFrame(sorted(r, key = lambda x: x[0]))
         df.columns = ['Date','Type','Entry','Exit','Days','Return%']
