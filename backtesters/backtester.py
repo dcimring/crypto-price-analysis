@@ -119,6 +119,11 @@ class Backtester(object):
 
         Parameters:
         target: (string) "strategy" or "market" or "difference"
+        "difference" shows the compound different and not arithmetic difference
+        e.g. compound difference between 50% and -50% is (1+0.5)/(1-0.5)-1 = 1.5/0.5-1 = 2 = 200%
+
+        Returns:
+        None
         '''
         self._make_sure_has_run()
         if target == "strategy":
