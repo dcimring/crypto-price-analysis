@@ -52,6 +52,11 @@ class PortfolioBacktester(Backtester):
             r += s.__str__() + "\n"
         return r
 
+    def plot(self, start_date=None, end_date=None, figsize=None):
+        '''Plot a chart for each strategy'''
+        for i, s in enumerate(self._strategies):
+            s.plot(start_date=start_date, end_date=end_date, figsize=figsize)
+
     def _trade_logic(self):
         '''Combine the stance from all strategies
         '''
