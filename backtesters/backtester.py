@@ -118,13 +118,15 @@ class Backtester(object):
         '''Draw a heatmap of returns
 
         Parameters:
-        target: (string) "strategy" or "market"
+        target: (string) "strategy" or "market" or "difference"
         '''
         self._make_sure_has_run()
         if target == "strategy":
             returns = self._df['strategy'].copy()
-        else:
+        elif target == "market":
             returns = self._df['market'].copy()
+        else:
+            returns = (self._df['strategy']-self._df['market']).copy()
         original_returns = returns.copy()
         returns_index = returns.resample('MS').first().index
         returns_values = self._sum_returns(returns, (returns.index.year, returns.index.month)).values
