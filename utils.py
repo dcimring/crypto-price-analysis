@@ -68,7 +68,7 @@ class bitmex_utils():
         except:
             return None
 
-    def get_all(self):
+    def get_all(self,symbol='XBTUSD',freq='1d'):
         '''Return the latest data. If any data is missing then get it first and save it.'''
         ohlc = pd.read_hdf('bitmex','XBTUSD')
 
@@ -78,11 +78,11 @@ class bitmex_utils():
          
         if days > 0:
             try:
-                ohlc = pd.concat([ohlc,get_last(n=days)],verify_integrity=True)
+                ohlc = pd.concat([ohlc,self.get_last(n=days,symbol=symbol,freq=freq)],verify_integrity=True)
             except:
                 pass
             finally:
-                ohlc.to_hdf('bitmex','XBTUSD',format='table')
+                ohlc.to_hdf('bitmex',symbol,format='table')
 
         return ohlc
 
