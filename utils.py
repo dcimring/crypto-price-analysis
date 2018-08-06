@@ -68,6 +68,21 @@ class bitmex_utils():
         except:
             return None
 
+    def get_page(self,symbol='XBTUSD',n=1,freq='1d'):
+        PAGE_SIZE = 100
+        try:
+            ohlcv_candles = pd.DataFrame(self.client.Trade.Trade_getBucketed(
+                        binSize=freq,
+                        symbol=symbol,
+                        count=PAGE_SIZE,
+                        start=PAGE_SIZE*(n-1)
+                        #reverse=True
+                    ).result()[0])
+            ohlcv_candles.set_index(['timestamp'], inplace=True)
+            return ohlcv_candles
+        except:
+            return None
+
     def get_all(self,symbol='XBTUSD',freq='1d'):
         '''Return the latest data. If any data is missing then get it first and save it.'''
         ohlc = pd.read_hdf('bitmex','XBTUSD')
