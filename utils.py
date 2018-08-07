@@ -85,11 +85,20 @@ class bitmex_utils():
 
     def get_all(self,symbol='XBTUSD',freq='1d'):
         '''Return the latest data. If any data is missing then get it first and save it.'''
-        ohlc = pd.read_hdf('bitmex',symbol.replace('.',''))
+        
+        name = symbol.replace('.','')
+
+        if freq !='1d':
+            name += '_' + freq
+        
+        ohlc = pd.read_hdf('bitmex',name)
 
         last_date = ohlc.iloc[-1].name
         today = datetime.now(tz=pytz.utc) # timezone for bitmex is UTC
         days = (today - last_date).days
+
+        if freq == '1h':
+            days *= 24 # for hourly we need 24 rows per missing day
          
         if days > 0:
             try:
@@ -97,7 +106,7 @@ class bitmex_utils():
             except:
                 pass
             finally:
-                ohlc.to_hdf('bitmex',symbol.replace('.',''),format='table')
+                ohlc.to_hdf('bitmex',name,format='table')
 
         return ohlc
 
