@@ -33,3 +33,6 @@ from MA_stop_loss import MAStopLossBacktester
 import williams
 reload(williams)
 from williams import WilliamsRBacktester
+import MA_short_only
+reload(MA_short_only)
+from MA_short_only import MAShortOnlyBacktester
