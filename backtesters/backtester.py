@@ -71,7 +71,7 @@ class Backtester(object):
                 sell_date = self._df['last'].index[-1] # current date
             finally:
                 days = (sell_date - date).days 
-                r.append((date,"Long",round(price,3),round(sell_price,3),days,sell_price/price-1))   
+                r.append((date,"Long",round(price,6),round(sell_price,6),days,sell_price/price-1))   
 
         if not self._long_only: # short trades
             for date, price in sell.iteritems():
@@ -83,7 +83,7 @@ class Backtester(object):
                     cover_date = self._df['last'].index[-1] # current date
                 finally:
                     days = (cover_date - date).days #todo - does this need +1?
-                    r.append((date,"Short",round(price,3),round(cover_price,3),days,price/cover_price-1))  
+                    r.append((date,"Short",round(price,6),round(cover_price,6),days,price/cover_price-1))  
 
         df = pd.DataFrame(sorted(r, key = lambda x: x[0]))
         df.columns = ['Date','Type','Entry','Exit','Days','Return%']
