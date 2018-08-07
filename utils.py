@@ -85,7 +85,7 @@ class bitmex_utils():
 
     def get_all(self,symbol='XBTUSD',freq='1d'):
         '''Return the latest data. If any data is missing then get it first and save it.'''
-        ohlc = pd.read_hdf('bitmex','XBTUSD')
+        ohlc = pd.read_hdf('bitmex',symbol.replace('.',''))
 
         last_date = ohlc.iloc[-1].name
         today = datetime.now(tz=pytz.utc) # timezone for bitmex is UTC
@@ -97,7 +97,7 @@ class bitmex_utils():
             except:
                 pass
             finally:
-                ohlc.to_hdf('bitmex',symbol,format='table')
+                ohlc.to_hdf('bitmex',symbol.replace('.',''),format='table')
 
         return ohlc
 
