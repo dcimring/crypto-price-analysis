@@ -27,7 +27,7 @@ class YaleBacktester(Backtester):
     long_only: (boolean) True if the strategy can only go long
     '''
 
-    def __init__(self, series, lookback=7,threshhold=0.2,hold=7,max_positions=1,long_only=True):
+    def __init__(self, series, lookback=7, threshhold=0.2, hold=7, max_positions=1, long_only=True):
         self._threshhold = threshhold
         self._lookback = lookback
         self._hold = hold
