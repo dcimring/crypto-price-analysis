@@ -254,12 +254,9 @@ class Backtester(object):
         # For buy, sell, and trade calculation shift(1) leads to a value of NA for first entry which then differs from 0
         # This was fixed by doing a fillna(0) after the shift(1)
 
-        self._df['buy'] = np.where( (self._df['stance'] != self._df['stance'].shift(1)) & (self._df['stance'] == 1), self._df['last'], np.NAN)
+        self._df['buy'] = np.where( self._df['stance'] - self._df['stance'].shift(1).fillna(0) > 0, self._df['last'], np.NAN)
 
-        if not self._long_only:
-            self._df['sell'] = np.where( (self._df['stance'] != self._df['stance'].shift(1)) & (self._df['stance'] == -1), self._df['last'], np.NAN)
-        else:
-            self._df['sell'] = np.where( (self._df['stance'] != self._df['stance'].shift(1).fillna(0)) & (self._df['stance'] == 0), self._df['last'], np.NAN)
+        self._df['sell'] = np.where( self._df['stance'] - self._df['stance'].shift(1).fillna(0) < 0, self._df['last'], np.NAN)
 
         self._df['strategy'] = self._df['market'] * self._df['stance'].shift(1) #shift(1) means day before
         self._df['strategy_last'] = self._df['strategy'].cumsum().apply(np.exp).dropna()
