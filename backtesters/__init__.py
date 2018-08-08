@@ -36,3 +36,6 @@ from williams import WilliamsRBacktester
 import MA_short_only
 reload(MA_short_only)
 from MA_short_only import MAShortOnlyBacktester
+import yale
+reload(yale)
+from yale import YaleBacktester
