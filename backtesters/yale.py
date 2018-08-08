@@ -22,18 +22,20 @@ class YaleBacktester(Backtester):
     lookback: (int) how many days back to calculate price change
     threshhold: (float) price needs to increase by this to buy
     hold: (int) how many days to hold
+    max_positions: (int) maximum number of positions open at any time
     long_only: (boolean) True if the strategy can only go long
     '''
 
-    def __init__(self, series, lookback=7,threshhold=0.2,hold=7,long_only=True):
+    def __init__(self, series, lookback=7,threshhold=0.2,hold=7,max_positions=1,long_only=True):
         self._threshhold = threshhold
         self._lookback = lookback
         self._hold = hold
+        self._max_positions = max_positions
         super(YaleBacktester,self).__init__(series,long_only=long_only)
 
     def __str__(self):
-        return "Yale Backtest Strategy (lookback=%d, threshhold=%0.3f, hold=%d, long_only=%s, start=%s, end=%s)" % (
-            self._lookback, self._threshhold, self._hold, str(self._long_only), str(self._start_date), str(self._end_date))
+        return "Yale Backtest Strategy (lookback=%d, threshhold=%0.3f, hold=%d, max_positions=%d, long_only=%s, start=%s, end=%s)" % (
+            self._lookback, self._threshhold, self._hold, self._max_positions, str(self._long_only), str(self._start_date), str(self._end_date))
 
 
     def _trade_logic(self):
@@ -45,33 +47,24 @@ class YaleBacktester(Backtester):
 
         current_stance = 0
         stances = []
-        count_down = self._hold
+        count_down = 0
         stances.append(0) # first day you can't make a trade
 
         for index in np.arange(1,len(self._df)):
             
-            buy_signal = False
-            sell_signal = False
-            
             if self._df['last'].iloc[index]/self._df['last'].iloc[index-self._lookback] >= (1+self._threshhold):
-                buy_signal = True
+                if current_stance < self._max_positions:
+                    current_stance += 1
+                    count_down += (self._hold + 1)
 
-            if count_down == 0:
-                sell_signal = True
+            if current_stance > 0 and count_down % (self._hold + 1) == 1:
+                current_stance -= 1
             
-            if current_stance == 0:
-                if buy_signal:
-                    current_stance = 1
-                    count_down = self._hold
-            
-            elif current_stance == 1:
-                if sell_signal:
-                    current_stance = 0
-            
-            count_down -= 1
-            
+            if count_down > 0: count_down -= 1
+
             stances.append(current_stance)
 
         self._df['stance'] = stances
+        self._df['stance'] /= self._max_positions
         
 
