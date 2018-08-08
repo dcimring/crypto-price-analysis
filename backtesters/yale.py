@@ -43,8 +43,6 @@ class YaleBacktester(Backtester):
         a set of stances
         '''
         
-        # todo - cater for more than 1 position at a time
-
         current_stance = 0
         stances = []
         count_down = 0
