@@ -75,9 +75,8 @@ class YaleBacktester(Backtester):
         current_stance = 0
         stances = []
         count_down = 0
-        stances.append(0) # first day you can't make a trade
 
-        for index in np.arange(1,len(self._df)):
+        for index in np.arange(0,len(self._df)):
             
             if self._df['last'].iloc[index]/self._df['last'].iloc[index-self._lookback] >= (1+self._threshhold):
                 if current_stance < self._max_positions:
