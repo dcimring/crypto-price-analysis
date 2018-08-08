@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from datetime import timedelta
 from backtester import Backtester
 
 class YaleBacktester(Backtester):
@@ -37,6 +38,34 @@ class YaleBacktester(Backtester):
         return "Yale Backtest Strategy (lookback=%d, threshhold=%0.3f, hold=%d, max_positions=%d, long_only=%s, start=%s, end=%s)" % (
             self._lookback, self._threshhold, self._hold, self._max_positions, str(self._long_only), str(self._start_date), str(self._end_date))
 
+    def trades(self):
+        '''Return a Pandas DataFrame with details of each trade
+        Needs to override its base class since each trade last 7 days
+        and buy / sells from different trades will get mixed up
+        '''
+        self._make_sure_has_run()
+        buy = self._df['buy'].dropna()
+        sell = self._df['sell'].dropna()
+        r = []
+        
+        for date, price in buy.iteritems(): 
+            try:
+                sell_date = date + timedelta(days=7)
+                sell_price = self._df.loc[sell_date,'last']
+            except IndexError: # its the end of the time series
+                sell_price = self._df['last'].iloc[-1] # current price
+                sell_date = self._df['last'].index[-1] # current date
+            finally:
+                days = (sell_date - date).days 
+                r.append((date,"Long",round(price,6),round(sell_price,6),days,sell_price/price-1))   
+
+
+        df = pd.DataFrame(sorted(r, key = lambda x: x[0]))
+        df.columns = ['Date','Type','Entry','Exit','Days','Return%']
+        df['Return%'] = np.round(df['Return%'] * 100,2)
+        df.set_index('Date', inplace=True)
+
+        return df
 
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
