@@ -1,10 +1,13 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-import bitmex
 import os
 import pandas as pd
-from datetime import datetime, timedelta, timezone
 import pytz
+import sys
+
+if sys.version_info > (3,0): 
+    import bitmex
+    from datetime import datetime, timedelta, timezone
 
 def comparison_chart(first,second,first_label=None,second_label=None):
     '''Draw two different time series on the same chart. Each series gets its own x and y scales.
