@@ -34,10 +34,14 @@ class PortfolioBacktester(Backtester):
         self._has_run = False
         self._long_only = False;
 
+        # If strategies contain dates with different time zones then this becomes an issue
+        # Setting time zone to none below solves some issues but creates new issues for reindex in _trade_logic()
+        # Need to look into adjusting all strategy dates for time zones before combining them
+
         start_dates, end_dates = [],[]
         for s in self._strategies:
-            start_dates.append(s._df.index[0].replace(tzinfo=None))
-            end_dates.append(s._df.index[-1].replace(tzinfo=None))
+            start_dates.append(s._df.index[0]) # .replace(tzinfo=None)
+            end_dates.append(s._df.index[-1]) # .replace(tzinfo=None)
 
         self._start_date = min(start_dates)
         self._end_date = max(end_dates)
@@ -75,6 +79,8 @@ class PortfolioBacktester(Backtester):
             return
 
         self._trade_logic()
+
+        #set_trace()
 
         self._df['strategy_last'] = self._df['strategy'].cumsum().apply(np.exp).dropna() # needed for drawdown calculations
 
