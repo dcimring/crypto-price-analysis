@@ -275,10 +275,11 @@ class Backtester(object):
 
         # Calculating sharpe using log returns
         # For daily data you annualise with sqrt(365.25)
+        # Work out how many periods per year
+
         days = (self._df.index[1] - self._df.index[0]).days
         secs = (self._df.index[1] - self._df.index[0]).seconds
-
-        periods_per_year = (365.25 * 24 * 3600) / (days * 3600 * 24 + secs)
+        periods_per_year = 365.25 / (days + secs / 3600 / 24.0)
 
         sharpe = math.sqrt(periods_per_year) * np.average(self._df['strategy'].dropna()) / np.std(self._df['strategy'].dropna())
         market_sharpe = math.sqrt(periods_per_year) * np.average(self._df['market'].dropna()) / np.std(self._df['market'].dropna())
