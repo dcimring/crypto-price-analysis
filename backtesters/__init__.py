@@ -42,3 +42,6 @@ from yale import YaleBacktester
 import MA_delay
 reload(MA_delay)
 from MA_delay import MADelayBacktester
+import majority_signal
+reload(majority_signal)
+from majority_signal import MajoritySignalBacktester
