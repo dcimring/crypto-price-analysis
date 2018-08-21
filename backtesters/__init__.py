@@ -51,3 +51,6 @@ from donchian import DonchianBacktester
 import triple_MA
 reload(triple_MA)
 from triple_MA import TripleMABacktester
+import bollinger_MR
+reload(bollinger_MR)
+from bollinger_MR import BollingerMR
