@@ -45,3 +45,9 @@ from MA_delay import MADelayBacktester
 import majority_signal
 reload(majority_signal)
 from majority_signal import MajoritySignalBacktester
+import donchian
+reload(donchian)
+from donchian import DonchianBacktester
+import triple_MA
+reload(triple_MA)
+from triple_MA import TripleMABacktester
