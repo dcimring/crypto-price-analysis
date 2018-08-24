@@ -20,9 +20,13 @@ class MAStopLossBacktester(MABacktester):
     stop_loss: (float) stop loss for shorts only eg 0.05 means a 5% stop loss
     '''
 
-    def __init__(self, series, ms=1, ml=10, long_only=False, ema=False, stop_loss = 0.05):
+    def __init__(self, series, highs=None, ms=1, ml=10, long_only=False, ema=False, stop_loss = 0.05):
         self._stop_loss = stop_loss
         super(MAStopLossBacktester,self).__init__(series,ms=ms,ml=ml,long_only=long_only,ema=ema)
+        if highs is None:
+            self._df['high'] = series
+        else:
+            self._df['high'] = highs
 
     def __str__(self):
         return "MA Stop Loss Backtest Strategy (ms=%d, ml=%d, ema=%s, long_only=%s, stop=%0.3f, start=%s, end=%s)" % (
@@ -52,52 +56,60 @@ class MAStopLossBacktester(MABacktester):
         current_price = None
         stops = self._df['last'].copy()
         stops[:] = np.nan # list of stops to be used for chart
-        wait_for_long = False 
+        wait_for_long = False
 
         for index, row in self._df.iterrows():
             
+            # Handle intraday data but only make trades with EOD data
+            if index.hour == 0:
+                end_of_day = True
+            else:
+                end_of_day = False
+
             current_price = row['last']
+            current_high = row['high']
             buy_signal = False
             sell_signal = False
             
-            if row['mdiff'] >= 0:
-                buy_signal = True
-            if row['mdiff'] < 0:
-                sell_signal = True
+            if end_of_day:
+                if row['mdiff'] >= 0:
+                    buy_signal = True
+                if row['mdiff'] < 0:
+                    sell_signal = True
 
-            if current_stance == 0:
-                if buy_signal:
-                    current_stance = 1
-                    entry_price = current_price
-                    wait_for_long = False
-                if sell_signal and not self._long_only and not wait_for_long:
-                    current_stance = -1
-                    entry_price = current_price
-                    #print "Going short on %s at %0.1f" % (str(index),entry_price)
-            elif current_stance == 1:
-                if sell_signal:
-                    current_stance = 0
-                    entry_price = None
-                    if not self._long_only and not wait_for_long:
+                if current_stance == 0:
+                    if buy_signal:
+                        current_stance = 1
+                        entry_price = current_price
+                        wait_for_long = False
+                    if sell_signal and not self._long_only and not wait_for_long:
                         current_stance = -1
                         entry_price = current_price
                         #print "Going short on %s at %0.1f" % (str(index),entry_price)
-            else:
-                if buy_signal:
-                    current_stance = 1
-                    entry_price = current_price
-                    wait_for_long = False
+                elif current_stance == 1:
+                    if sell_signal:
+                        current_stance = 0
+                        entry_price = None
+                        if not self._long_only and not wait_for_long:
+                            current_stance = -1
+                            entry_price = current_price
+                            #print "Going short on %s at %0.1f" % (str(index),entry_price)
+                else:
+                    if buy_signal:
+                        current_stance = 1
+                        entry_price = current_price
+                        wait_for_long = False
 
             # Check for stop loss
             # If we went long above and stop would have trigered today then fine stop was not needed
             # If we went short today then this won't trigger
-             
+            
             if current_stance == -1:
-                if entry_price / current_price <= (1-self._stop_loss):
+                if entry_price / current_high <= (1-self._stop_loss):
                     current_stance = 0 # go to cash
-                    stops.loc[index] = current_price
+                    stops.loc[index] = current_high
                     print "Stop loss triggered at %s entry %0.2f exit %0.2f loss %0.1f%%" % (str(index),
-                        entry_price, current_price, (entry_price/current_price-1) * 100)
+                        entry_price, current_high, (entry_price/current_high-1) * 100)
                     entry_price = None
                     wait_for_long = True # If a short gets stopped out then wait for next long before shorting again
             
@@ -105,5 +117,7 @@ class MAStopLossBacktester(MABacktester):
 
         self._df['stance'] = stances
         self._df['stop'] = stops
+
+
 
 
