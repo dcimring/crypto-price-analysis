@@ -27,15 +27,18 @@ class MajoritySignalBacktester(PortfolioBacktester):
         
         super(MajoritySignalBacktester,self).__init__(strategies=strategies, weights=weights)
 
-    def plot(self, start_date=None, end_date=None, figsize=None):
+    def plot(self, start_date=None, end_date=None, figsize=None, ax=None):
         self._make_sure_has_run()
         temp = self._df.loc[start_date:end_date]
        
-        fig, ax = plt.subplots(figsize=figsize)
+        if ax is None:
+            fig, ax = plt.subplots(figsize=figsize)
 
         ax.plot(temp['last'], label='Price')
         ax.plot(temp['buy'],color='g', linestyle='None', marker='^')
         ax.plot(temp['sell'],color='r', linestyle='None', marker='v')
+
+        return ax
 
     def _trade_logic(self):
         '''Add up all the short long signals
