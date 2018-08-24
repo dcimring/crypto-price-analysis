@@ -63,6 +63,11 @@ class Backtester(object):
         r = []
         
         for date, price in buy.iteritems(): # long trades
+            
+            # if you buy but stance is 0 or less then it was a short cover not a new long
+            if self._df.loc[date,'stance']<=0:
+                continue 
+            
             try:
                 sell_price = sell.loc[date:][0] # find next sell
                 sell_date = sell.loc[date:].index[0] # and the date sold 
@@ -74,7 +79,13 @@ class Backtester(object):
                 r.append((date,"Long",round(price,6),round(sell_price,6),days,sell_price/price-1))   
 
         if not self._long_only: # short trades
+
             for date, price in sell.iteritems():
+
+                # if you sell but stance is 0 or more then it was sale not a new short
+                if self._df.loc[date,'stance']>=0:
+                    continue 
+
                 try:
                     cover_price = buy.loc[date:][0] # find next sell
                     cover_date = buy.loc[date:].index[0] # and the date sold 
@@ -255,7 +266,6 @@ class Backtester(object):
         # This was fixed by doing a fillna(0) after the shift(1)
 
         self._df['buy'] = np.where( self._df['stance'] - self._df['stance'].shift(1).fillna(0) > 0, self._df['last'], np.NAN)
-
         self._df['sell'] = np.where( self._df['stance'] - self._df['stance'].shift(1).fillna(0) < 0, self._df['last'], np.NAN)
 
         self._df['strategy'] = self._df['market'] * self._df['stance'].shift(1) #shift(1) means day before
