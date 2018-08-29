@@ -96,9 +96,13 @@ class BollingerMomentum(Backtester):
             elif current_stance == 1:
                 if long_close:
                     current_stance = 0
+                    if short_signal:
+                        current_stance = -1
             elif current_stance == -1:
                 if short_close:
                     current_stance = 0
+                    if long_signal:
+                        current_stance = 1
 
             stances.append(current_stance)
 
