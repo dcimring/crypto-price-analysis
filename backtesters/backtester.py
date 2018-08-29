@@ -295,6 +295,7 @@ class Backtester(object):
         market_sharpe = math.sqrt(periods_per_year) * np.average(self._df['market'].dropna()) / np.std(self._df['market'].dropna())
         self._results = {"Strategy":np.round(strategy,2), "Market":np.round(market,2),"Trades":trades,"Sharpe":np.round(sharpe,2),
                         "Strategy_pa": np.round(strategy_pa,2), "Market_pa": np.round(market_pa,2), "Years": np.round(years,2),
-                        "Trades_per_month":np.round(trades/years/12,2),"Market_sharpe":np.round(market_sharpe,2)}
+                        "Trades_per_month":np.round(trades/years/12,2),"Market_sharpe":np.round(market_sharpe,2),
+                        'Current_stance':self._df['stance'].iloc[-1]}
         self._has_run = True
 
