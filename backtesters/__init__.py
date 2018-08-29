@@ -54,3 +54,9 @@ from triple_MA import TripleMABacktester
 import bollinger_MR
 reload(bollinger_MR)
 from bollinger_MR import BollingerMR
+import bollinger_momentum
+reload(bollinger_momentum)
+from bollinger_momentum import BollingerMomentum
+import ATR
+reload(ATR)
+from ATR import ATRMomentum
