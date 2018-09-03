@@ -60,3 +60,6 @@ from bollinger_momentum import BollingerMomentum
 import ATR
 reload(ATR)
 from ATR import ATRMomentum
+import google
+reload(google)
+from google import GoogleBacktester
