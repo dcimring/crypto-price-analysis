@@ -31,7 +31,7 @@ class GoogleBacktester(Backtester):
             self._ms, self._ml, str(self._long_only), str(self._start_date), str(self._end_date))
 
 
-    def plot(self, start_date=None, end_date=None, figsize=None):
+    def plot(self, start_date=None, end_date=None, figsize=None, fix_searches_scale=False):
         sns.set_style("white")
 
         fig=plt.figure(figsize=figsize)
@@ -52,8 +52,9 @@ class GoogleBacktester(Backtester):
         ax2.legend(loc = 'upper left')
         ax2.xaxis.set_ticks([]) 
         ax2.yaxis.tick_right()
-        min_y, max_y = self._df['searches'].min(), self._df['searches'].max()
-        ax2.set_ylim(min_y,max_y)
+        if fix_searches_scale:
+            min_y, max_y = self._df['searches'].min(), self._df['searches'].max()
+            ax2.set_ylim(min_y,max_y)
 
         return ax
 
