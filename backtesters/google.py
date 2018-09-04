@@ -44,11 +44,11 @@ class GoogleBacktester(Backtester):
 
         temp = self._df.loc[start_date:end_date]
         
-        ax2.plot(temp['ml'],"--",label='', color='gray')
+        ax2.plot(temp['ml'],"--",label='', color='silver')
         if self._ms > 1:
-            ax2.plot(temp['ms'],label='searches', color='gray')
+            ax2.plot(temp['ms'],label='searches', color='silver')
         else:
-            ax2.plot(temp['searches'], label='searches', color='gray')
+            ax2.plot(temp['searches'], label='searches', color='silver')
         ax2.legend(loc = 'upper left')
         #ax2.xaxis.tick_top()
         ax2.xaxis.set_ticks([]) 
