@@ -33,13 +33,26 @@ class GoogleBacktester(Backtester):
 
     def plot(self, start_date=None, end_date=None, figsize=None):
         sns.set_style("white")
-        ax = Backtester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
+
+        fig=plt.figure(figsize=figsize)
+        ax=fig.add_subplot(111)
+        ax2=fig.add_subplot(111,frame_on=False)
+
+        Backtester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize, ax=ax)
         ax.set_title(self.__str__(), size=13)
+        ax.legend(loc='upper right')
+
         temp = self._df.loc[start_date:end_date]
-        ax.plot(temp['ml'], label='ml')
+        
+        ax2.plot(temp['ml'],"--",label='', color='gray')
         if self._ms > 1:
-            ax.plot(temp['ms'], label='ms')
-        ax.legend()
+            ax2.plot(temp['ms'],label='searches', color='gray')
+        else:
+            ax2.plot(temp['searches'], label='searches', color='gray')
+        ax2.legend(loc = 'upper left')
+        #ax2.xaxis.tick_top()
+        ax2.xaxis.set_ticks([]) 
+        ax2.yaxis.tick_right()
         #plt.show()
         return ax
 
