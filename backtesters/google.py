@@ -50,10 +50,11 @@ class GoogleBacktester(Backtester):
         else:
             ax2.plot(temp['searches'], label='searches', color='silver')
         ax2.legend(loc = 'upper left')
-        #ax2.xaxis.tick_top()
         ax2.xaxis.set_ticks([]) 
         ax2.yaxis.tick_right()
-        #plt.show()
+        min_y, max_y = self._df['searches'].min(), self._df['searches'].max()
+        ax2.set_ylim(min_y,max_y)
+
         return ax
 
     def _indicators(self):
