@@ -40,6 +40,14 @@ class MAStopLossBacktester(MABacktester):
         ax.legend()
         plt.show()
 
+    def trades(self):
+
+        # If a buy results from a stop loss then set buy price to stop loss price and not last price
+        # This is needed when seperate data for highs is used 
+        self._df['buy'] = np.where(~self._df['stop'].isnull(),self._df['stop'],self._df['buy'])
+
+        return super(MAStopLossBacktester,self).trades()
+
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
         a set of stances
@@ -122,8 +130,13 @@ class MAStopLossBacktester(MABacktester):
             # If we went long above and stop would have trigered today then fine stop was not needed
             # If we went short today then this won't trigger
             
-            if current_stance == -1:
-                if entry_price / current_high <= (1-stop_loss):
+            # with seperte highs data the strategy is sometimes going short and then changing to long on
+            # the very same day so this must be prevented
+
+            # todo - performance stats still assume you got last price instead of high price 
+
+            if current_stance == -1: 
+                if entry_price / current_high <= (1-stop_loss) and entry_price != current_price: # must be on different day
                     current_stance = 1 # if short is stopped then you are now long again
                     stops.loc[index] = current_high
                     print "Stop loss triggered at %s entry %0.2f exit %0.2f loss %0.1f%%" % (str(index),
