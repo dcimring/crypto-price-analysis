@@ -57,6 +57,7 @@ class MAStopLossBacktester(MABacktester):
         stops = self._df['last'].copy()
         stops[:] = np.nan # list of stops to be used for chart
         wait_for_long = False
+        stop_loss = self._stop_loss
 
         for index, row in self._df.iterrows():
             
@@ -68,45 +69,62 @@ class MAStopLossBacktester(MABacktester):
 
             current_price = row['last']
             current_high = row['high']
+            
+            prev_price = self._df['last'].iloc[-self._ml]
+            big_move = True #abs(current_price-prev_price)/current_price > 0 # try prevent trading during sideways periods
+            choppy = abs(current_price-prev_price)/current_price < 0.05
+            required_breach = 0
+            # if choppy:
+            #     required_breach = 0.02
+
+
             buy_signal = False
             sell_signal = False
             
             if end_of_day:
-                if row['mdiff'] >= 0:
+                if row['mdiff'] / current_price >= required_breach:
                     buy_signal = True
-                if row['mdiff'] < 0:
+                if row['mdiff'] / current_price < -required_breach:
                     sell_signal = True
 
                 if current_stance == 0:
-                    if buy_signal:
+                    if buy_signal and big_move:
                         current_stance = 1
                         entry_price = current_price
                         wait_for_long = False
-                    if sell_signal and not self._long_only and not wait_for_long:
+                    if sell_signal and not self._long_only and not wait_for_long and big_move:
                         current_stance = -1
                         entry_price = current_price
+                        stop_loss = self._stop_loss # set stop loss for every short
                         #print "Going short on %s at %0.1f" % (str(index),entry_price)
-                elif current_stance == 1:
-                    if sell_signal:
+                elif current_stance == 1 and not wait_for_long:
+                    if sell_signal and big_move:
                         current_stance = 0
                         entry_price = None
                         if not self._long_only and not wait_for_long:
                             current_stance = -1
                             entry_price = current_price
+                            stop_loss = self._stop_loss # set stop loss for every short
                             #print "Going short on %s at %0.1f" % (str(index),entry_price)
                 else:
-                    if buy_signal:
+                    if buy_signal and big_move:
                         current_stance = 1
                         entry_price = current_price
                         wait_for_long = False
+
+            # Check to see if stop loss can be moved
+            if current_stance == -1 and stop_loss > 0:
+                if entry_price / current_high >= (1+stop_loss):
+                    stop_loss = 0
+                    print "Stop loss moved at %s current profit %0.1f%%" % ( str(index), (entry_price / current_high - 1) * 100)
 
             # Check for stop loss
             # If we went long above and stop would have trigered today then fine stop was not needed
             # If we went short today then this won't trigger
             
             if current_stance == -1:
-                if entry_price / current_high <= (1-self._stop_loss):
-                    current_stance = 0 # go to cash
+                if entry_price / current_high <= (1-stop_loss):
+                    current_stance = 1 # if short is stopped then you are now long again
                     stops.loc[index] = current_high
                     print "Stop loss triggered at %s entry %0.2f exit %0.2f loss %0.1f%%" % (str(index),
                         entry_price, current_high, (entry_price/current_high-1) * 100)
