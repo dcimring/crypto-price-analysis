@@ -293,9 +293,22 @@ class Backtester(object):
 
         sharpe = math.sqrt(periods_per_year) * np.average(self._df['strategy'].dropna()) / np.std(self._df['strategy'].dropna())
         market_sharpe = math.sqrt(periods_per_year) * np.average(self._df['market'].dropna()) / np.std(self._df['market'].dropna())
+
+        # Current trade unrealised profit or loss
+        current_stance = self._df['stance'].iloc[-1]
+        last = self._df['last'].iloc[-1]
+        if current_stance == 1:
+            entry = self._df['buy'].dropna()[-1]
+            unrealised = (last / entry - 1) * 100
+        elif current_stance == -1:
+            entry = self._df['sell'].dropna()[-1]
+            unrealised = (entry / last - 1) * 100
+        else:
+            unrealised = 0
+
         self._results = {"Strategy":np.round(strategy,2), "Market":np.round(market,2),"Trades":trades,"Sharpe":np.round(sharpe,2),
                         "Strategy_pa": np.round(strategy_pa,2), "Market_pa": np.round(market_pa,2), "Years": np.round(years,2),
                         "Trades_per_month":np.round(trades/years/12,2),"Market_sharpe":np.round(market_sharpe,2),
-                        'Current_stance':self._df['stance'].iloc[-1]}
+                        'Current_stance':current_stance,"Unrealised":np.round(unrealised,2)}
         self._has_run = True
 
