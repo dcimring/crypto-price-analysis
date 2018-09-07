@@ -87,8 +87,8 @@ class Backtester(object):
                     continue 
 
                 try:
-                    cover_price = buy.loc[date:][0] # find next sell
-                    cover_date = buy.loc[date:].index[0] # and the date sold 
+                    cover_price = buy.loc[date:][0] # find next buy
+                    cover_date = buy.loc[date:].index[0] # and the date  
                 except IndexError: # its the end of the time series
                     cover_price = self._df['last'].iloc[-1] # current price
                     cover_date = self._df['last'].index[-1] # current date
