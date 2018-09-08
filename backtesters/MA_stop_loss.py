@@ -89,7 +89,40 @@ class MAStopLossBacktester(MABacktester):
             buy_signal = False
             sell_signal = False
             
+            # Check to see if stop loss can be moved
+            if current_stance == -1 and stop_loss > 0:
+                if entry_price / current_high >= (1+stop_loss):
+                    stop_loss = 0
+                    print "Stop loss moved at %s current profit %0.1f%%" % ( str(index), (entry_price / current_high - 1) * 100)
+
+            # Check for stop loss
+            # If we went long above and stop would have trigered today then fine stop was not needed
+            # If we went short today then this won't trigger
+
+            # todo - performance stats still assume you got last price instead of high price 
+            # trades() has been adjusted to use high price
+
+            if current_stance == -1: 
+                if entry_price / current_high <= (1-stop_loss): #and entry_price != current_price: # must be on different day
+                    current_stance = 1 # if short is stopped then you are now long again
+                    stops.loc[index] = current_high
+                    print "Stop loss triggered at %s entry %0.2f exit %0.2f loss %0.1f%%" % (str(index),
+                        entry_price, current_high, (entry_price/current_high-1) * 100)
+                    entry_price = None
+                    wait_for_long = True # If a short gets stopped out then wait for next long before shorting again
+
             if end_of_day:
+
+                # different stop for end of day
+                if current_stance == -1: 
+                    if entry_price / current_price <= (1-0.04): #and entry_price != current_price: # must be on different day
+                        current_stance = 1 # if short is stopped then you are now long again
+                        stops.loc[index] = current_price
+                        print "Stop loss triggered at EOD %s entry %0.2f exit %0.2f loss %0.1f%%" % (str(index),
+                            entry_price, current_price, (entry_price/current_price-1) * 100)
+                        entry_price = None
+                        wait_for_long = True # If a short gets stopped out then wait for next long before shorting again
+
                 if row['mdiff'] / current_price >= required_breach:
                     buy_signal = True
                 if row['mdiff'] / current_price < -required_breach:
@@ -120,29 +153,6 @@ class MAStopLossBacktester(MABacktester):
                         entry_price = current_price
                         wait_for_long = False
 
-            # Check to see if stop loss can be moved
-            if current_stance == -1 and stop_loss > 0:
-                if entry_price / current_high >= (1+stop_loss):
-                    stop_loss = 0
-                    print "Stop loss moved at %s current profit %0.1f%%" % ( str(index), (entry_price / current_high - 1) * 100)
-
-            # Check for stop loss
-            # If we went long above and stop would have trigered today then fine stop was not needed
-            # If we went short today then this won't trigger
-            
-            # with seperte highs data the strategy is sometimes going short and then changing to long on
-            # the very same day so this must be prevented
-
-            # todo - performance stats still assume you got last price instead of high price 
-
-            if current_stance == -1: 
-                if entry_price / current_high <= (1-stop_loss) and entry_price != current_price: # must be on different day
-                    current_stance = 1 # if short is stopped then you are now long again
-                    stops.loc[index] = current_high
-                    print "Stop loss triggered at %s entry %0.2f exit %0.2f loss %0.1f%%" % (str(index),
-                        entry_price, current_high, (entry_price/current_high-1) * 100)
-                    entry_price = None
-                    wait_for_long = True # If a short gets stopped out then wait for next long before shorting again
             
             stances.append(current_stance)
 
