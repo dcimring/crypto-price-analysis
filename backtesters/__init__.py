@@ -63,3 +63,6 @@ from ATR import ATRMomentum
 import google
 reload(google)
 from google import GoogleBacktester
+import MA_assymetric
+reload(MA_assymetric)
+from MA_assymetric import MAAssymetricBacktester
