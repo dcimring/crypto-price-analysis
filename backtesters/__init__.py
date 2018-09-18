@@ -66,3 +66,6 @@ from google import GoogleBacktester
 import MA_assymetric
 reload(MA_assymetric)
 from MA_assymetric import MAAssymetricBacktester
+import MA_stop_loss2
+reload(MA_stop_loss2)
+from MA_stop_loss2 import MAStopLossBacktester2
