@@ -23,12 +23,13 @@ class MAStopLossBacktester(MABacktester):
     EOD_only (boolean) True if you make trades only at end of day
     '''
 
-    def __init__(self, series, highs=None, lows=None, ms=1, ml=10, ema=False, stop_loss = 0.05, trailing_stop=False, EOD_only=True):
+    def __init__(self, series, highs=None, lows=None, ms=1, ml=10, ema=False, stop_loss = 0.05, trailing_stop=False, EOD_only=True, freq="D"):
         self._stop_loss = stop_loss
         super(MAStopLossBacktester,self).__init__(series,ms=ms,ml=ml,long_only=False,ema=ema)
 
         self._trailing_stop = trailing_stop
         self._EOD_only = EOD_only
+        self._freq = freq
 
         if highs is None:
             self._df['high'] = series
@@ -42,16 +43,15 @@ class MAStopLossBacktester(MABacktester):
 
 
     def __str__(self):
-        return "MA Stop Loss Backtest Strategy (ms=%d, ml=%d, ema=%s, long_only=%s, stop=%0.3f, trailing_stop=%s, EOD_only=%s, start=%s, end=%s)" % (
+        return "MA Stop Loss Backtest Strategy (ms=%d, ml=%d, ema=%s, long_only=%s, stop=%0.3f, trailing_stop=%s, EOD_only=%s, freq='%s' start=%s, end=%s)" % (
             self._ms, self._ml, str(self._ema), str(self._long_only), self._stop_loss,
-            str(self._trailing_stop), str(self._EOD_only), str(self._start_date), str(self._end_date))
+            str(self._trailing_stop), str(self._EOD_only), self._freq, str(self._start_date), str(self._end_date))
 
     def plot(self, start_date=None, end_date=None, figsize=None):
         sns.set_style("white")
         ax = MABacktester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
         temp = self._df.loc[start_date:end_date]
-        ax.plot(temp['stop_short'],color='orange', linestyle='None', marker='o')
-        ax.plot(temp['stop_long'],color='orange', linestyle='None', marker='o')
+        ax.plot(temp['stop'],color='orange', linestyle='None', marker='o')
         ax.legend()
         plt.show()
 
@@ -62,6 +62,30 @@ class MAStopLossBacktester(MABacktester):
         self._df['buy'] = np.where(~self._df['stop'].isnull(),self._df['stop'],self._df['buy'])
 
         return super(MAStopLossBacktester,self).trades()
+
+    def _indicators(self):
+
+        if not self._EOD_only or self._freq=="D":
+            return super(MAStopLossBacktester,self)._indicators()
+
+        # if EOD_only then calculate indicators using EOD data only
+        daily = self._df['last'].resample("D").first().to_frame()
+
+        if self._ema:
+            daily['ms'] = np.round(daily['last'].ewm(span=self._ms, adjust=False).mean(),8)
+            daily['ml'] = np.round(daily['last'].ewm(span=self._ml, adjust=False).mean(),8)
+        else:
+            daily['ms'] = np.round(daily['last'].rolling(window=self._ms).mean(), 8)
+            daily['ml'] = np.round(daily['last'].rolling(window=self._ml).mean(), 8)
+
+        daily['mdiff'] = daily['ms'] - daily['ml']
+
+        hourly = daily[['ms','ml','mdiff']].resample(self._freq).first().fillna(method='ffill')
+
+        self._df['ms'] = hourly['ms']
+        self._df['ml'] = hourly['ml']
+        self._df['mdiff'] = hourly['mdiff']
+
 
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
