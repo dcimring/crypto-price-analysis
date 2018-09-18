@@ -111,7 +111,8 @@ class MAStopLossBacktester(MABacktester):
 
         for index, row in self._df.iterrows():
             
-            # Handle intraday data but only make trades with EOD data
+            # Handle intraday data support EOD only trades
+            
             if index.hour == 0:
                 end_of_day = True
             else:
@@ -120,8 +121,6 @@ class MAStopLossBacktester(MABacktester):
             current_price = row['last']
             current_high = row['high']
             current_low = row['low']
-            
-            prev_price = self._df['last'].iloc[-self._ml]
             
             buy_signal = False
             sell_signal = False
@@ -135,7 +134,7 @@ class MAStopLossBacktester(MABacktester):
                         stop_price = current_low + stop_loss
 
                 if current_high >= stop_price: 
-                    current_stance = 1 # if short is stopped then you are nowlong
+                    current_stance = 1 # if short is stopped then you are now long since you are holding physical
                     stops.loc[index] = current_high
                     print "Stop loss for short triggered at %s entry %0.5f exit %0.5f loss %0.1f%%" % (str(index),
                         entry_price, current_high, (entry_price/current_high-1) * 100)
