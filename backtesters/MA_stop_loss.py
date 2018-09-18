@@ -11,7 +11,8 @@ from IPython.core.debugger import set_trace
 
 class MAStopLossBacktester(MABacktester):
     '''Backtest a Moving Average (MA) crossover strategy with stop loss for shorts only
-    For shorts and longs use MAStopLossBacktester2
+    The strategy assumes you are holding physical and using futures to short only
+    For testing a strategy that both shorts and longs with futures use MAStopLossBacktester2
 
     Parameters:
     series: (Panda Series) a list of CLOSE prices by date
