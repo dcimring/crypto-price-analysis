@@ -102,6 +102,7 @@ class MAStopLossBacktester(MABacktester):
         stances = []
         entry_price = None
         current_price = None
+        stop_loss = None
         
         # list of stops to be used for chart
         stops = self._df['last'].copy()
