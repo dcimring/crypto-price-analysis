@@ -42,14 +42,15 @@ class MAStopLossBacktester2(MAStopLossBacktester):
         ax.legend()
         plt.show()
 
-    def trades(self):
-
-        # If a buy results from a stop loss then set buy price to stop loss price and not last price
-        # This is needed when seperate data for highs is used 
-        self._df['buy'] = np.where(~self._df['stop_short'].isnull(),self._df['stop_short'],self._df['buy'])
-        self._df['sell'] = np.where(~self._df['stop_long'].isnull(),self._df['stop_long'],self._df['sell'])
-
-        return super(MAStopLossBacktester,self).trades() # calls grand parent
+    
+    def _market_returns(self):
+        
+        # Override this method so that stop loss trade prices can be adjusted for
+        self._df['last_adj_stops'] = np.where(~self._df['stop_short'].isnull(),self._df['stop_short'],self._df['last'])
+        self._df['last_adj_stops'] = np.where(~self._df['stop_long'].isnull(),self._df['stop_long'],self._df['last'])
+        self._df['market'] = np.log(self._df['last_adj_stops'] / self._df['last_adj_stops'].shift(1))
+        self._df['buy'] = np.where( self._df['stance'] - self._df['stance'].shift(1).fillna(0) > 0, self._df['last_adj_stops'], np.NAN)
+        self._df['sell'] = np.where( self._df['stance'] - self._df['stance'].shift(1).fillna(0) < 0, self._df['last_adj_stops'], np.NAN)
 
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with

@@ -55,13 +55,6 @@ class MAStopLossBacktester(MABacktester):
         ax.legend()
         plt.show()
 
-    def trades(self):
-
-        # If a buy results from a stop loss then set buy price to stop loss price and not last price
-        # This is needed when seperate data for highs is used 
-        self._df['buy'] = np.where(~self._df['stop'].isnull(),self._df['stop'],self._df['buy'])
-
-        return super(MAStopLossBacktester,self).trades()
 
     def _indicators(self):
 
@@ -86,6 +79,13 @@ class MAStopLossBacktester(MABacktester):
         self._df['ml'] = hourly['ml']
         self._df['mdiff'] = hourly['mdiff']
 
+    def _market_returns(self):
+        
+        # Override this method so that stop loss trade prices can be adjusted for
+        self._df['last_adj_stops'] = np.where(~self._df['stop'].isnull(),self._df['stop'],self._df['last'])
+        self._df['market'] = np.log(self._df['last_adj_stops'] / self._df['last_adj_stops'].shift(1))
+        self._df['buy'] = np.where( self._df['stance'] - self._df['stance'].shift(1).fillna(0) > 0, self._df['last_adj_stops'], np.NAN)
+        self._df['sell'] = np.where( self._df['stance'] - self._df['stance'].shift(1).fillna(0) < 0, self._df['last_adj_stops'], np.NAN)
 
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
