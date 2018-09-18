@@ -6,10 +6,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from MA import MABacktester
+from MA_stop_loss import MAStopLossBacktester
 from IPython.core.debugger import set_trace
 
-class MAStopLossBacktester2(MABacktester):
+class MAStopLossBacktester2(MAStopLossBacktester):
     '''Backtest a Moving Average (MA) crossover strategy with stop loss for BOTH the shorts and the long
     For shorts only use MAStopLossBacktester
 
@@ -23,28 +23,15 @@ class MAStopLossBacktester2(MABacktester):
     EOD_only (boolean) True if you make trades only at end of day
     '''
 
-    def __init__(self, series, highs=None, lows=None, ms=1, ml=10, ema=False, stop_loss = 0.05, trailing_stop=False, EOD_only=True):
-        self._stop_loss = stop_loss
-        super(MAStopLossBacktester2,self).__init__(series,ms=ms,ml=ml,long_only=False,ema=ema)
-
-        self._trailing_stop = trailing_stop
-        self._EOD_only = EOD_only
-
-        if highs is None:
-            self._df['high'] = series
-        else:
-            self._df['high'] = highs
-
-        if lows is None:
-            self._df['low'] = series
-        else:
-            self._df['low'] = lows
+    def __init__(self, series, highs=None, lows=None, ms=1, ml=10, ema=False, stop_loss = 0.05, trailing_stop=False, EOD_only=True, freq="D"):
+        
+        super(MAStopLossBacktester2,self).__init__(series,highs=highs, lows=lows, ms=ms,ml=ml,ema=ema, stop_loss=stop_loss, trailing_stop=trailing_stop, EOD_only=EOD_only, freq=freq)
 
 
     def __str__(self):
-        return "MA Stop Loss Backtest Strategy 2 (ms=%d, ml=%d, ema=%s, long_only=%s, stop=%0.3f, trailing_stop=%s, EOD_only=%s, start=%s, end=%s)" % (
+        return "MA Stop Loss Backtest Strategy 2 (ms=%d, ml=%d, ema=%s, long_only=%s, stop=%0.3f, trailing_stop=%s, EOD_only=%s, freq='%s', start=%s, end=%s)" % (
             self._ms, self._ml, str(self._ema), str(self._long_only), self._stop_loss,
-            str(self._trailing_stop), str(self._EOD_only), str(self._start_date), str(self._end_date))
+            str(self._trailing_stop), str(self._EOD_only), self._freq, str(self._start_date), str(self._end_date))
 
     def plot(self, start_date=None, end_date=None, figsize=None):
         sns.set_style("white")
@@ -62,7 +49,7 @@ class MAStopLossBacktester2(MABacktester):
         self._df['buy'] = np.where(~self._df['stop_short'].isnull(),self._df['stop_short'],self._df['buy'])
         self._df['sell'] = np.where(~self._df['stop_long'].isnull(),self._df['stop_long'],self._df['sell'])
 
-        return super(MAStopLossBacktester2,self).trades()
+        return super(MAStopLossBacktester,self).trades() # calls grand parent
 
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
