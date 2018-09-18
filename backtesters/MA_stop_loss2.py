@@ -76,7 +76,8 @@ class MAStopLossBacktester2(MAStopLossBacktester):
 
         for index, row in self._df.iterrows():
             
-            # Handle intraday data but only make trades with EOD data
+            # Handle intraday data support EOD only trades
+
             if index.hour == 0:
                 end_of_day = True
             else:
@@ -86,16 +87,11 @@ class MAStopLossBacktester2(MAStopLossBacktester):
             current_high = row['high']
             current_low = row['low']
             
-            prev_price = self._df['last'].iloc[-self._ml]
-            
             buy_signal = False
             sell_signal = False
             
 
             # Check for stop loss
-            
-            # todo - performance stats still assume you got last price instead of high price 
-            # trades() has been adjusted to use high and low prices
 
             if current_stance == -1: 
 

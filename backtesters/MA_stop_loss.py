@@ -127,9 +127,6 @@ class MAStopLossBacktester(MABacktester):
             sell_signal = False
             
             # Check for stop loss
-            
-            # todo - performance stats still assume you got last price instead of high price 
-            # trades() has been adjusted to use high and low prices
 
             if current_stance == -1: 
 
