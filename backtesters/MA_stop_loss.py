@@ -24,13 +24,13 @@ class MAStopLossBacktester(MABacktester):
     EOD_only (boolean) True if you make trades only at end of day
     '''
 
-    def __init__(self, series, highs=None, lows=None, ms=1, ml=10, ema=False, stop_loss = 0.05, trailing_stop=False, EOD_only=True, freq="D"):
+    def __init__(self, series, highs=None, lows=None, ms=1, ml=10, ema=False, stop_loss = 0.05, trailing_stop=False, EOD_only=True):
         self._stop_loss = stop_loss
         super(MAStopLossBacktester,self).__init__(series,ms=ms,ml=ml,long_only=False,ema=ema)
 
         self._trailing_stop = trailing_stop
         self._EOD_only = EOD_only
-        self._freq = freq
+        self._freq = pd.infer_freq(series.index)
 
         if highs is None:
             self._df['high'] = series
@@ -113,7 +113,7 @@ class MAStopLossBacktester(MABacktester):
 
         for index, row in self._df.iterrows():
             
-            # Handle intraday data support EOD only trades
+            # Handle intraday data and also support EOD only trades
             
             if index.hour == 0:
                 end_of_day = True
