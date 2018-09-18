@@ -44,7 +44,7 @@ class MAStopLossBacktester(MABacktester):
 
 
     def __str__(self):
-        return "MA Stop Loss Backtest Strategy (ms=%d, ml=%d, ema=%s, long_only=%s, stop=%0.3f, trailing_stop=%s, EOD_only=%s, freq='%s' start=%s, end=%s)" % (
+        return "MA Stop Loss Backtest Strategy (ms=%d, ml=%d, ema=%s, long_only=%s, stop=%0.3f, trailing_stop=%s, EOD_only=%s, freq='%s', start=%s, end=%s)" % (
             self._ms, self._ml, str(self._ema), str(self._long_only), self._stop_loss,
             str(self._trailing_stop), str(self._EOD_only), self._freq, str(self._start_date), str(self._end_date))
 
