@@ -69,3 +69,6 @@ from MA_assymetric import MAAssymetricBacktester
 import MA_stop_loss2
 reload(MA_stop_loss2)
 from MA_stop_loss2 import MAStopLossBacktester2
+import HA
+reload(HA)
+from HA import HABacktester
