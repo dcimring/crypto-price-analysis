@@ -99,13 +99,18 @@ class bitmex_utils():
         last_date = ohlc.iloc[-1].name
         today = datetime.now(tz=pytz.utc) # timezone for bitmex is UTC
         days = (today - last_date).days
+        hours = int((today - last_date).seconds / (60*60))
 
-        if freq == '1h':
-            days *= 24 # for hourly we need 24 rows per missing day
-         
-        if days > 0:
+        if freq=='1h':
+            n = hours
+        elif freq=='1d':
+            n = days
+        else:
+            raise ValueError('Freq of %s is not supported' % freq)
+
+        if n > 0:
             try:
-                ohlc = pd.concat([ohlc,self.get_last(n=days,symbol=symbol,freq=freq)],verify_integrity=True)
+                ohlc = pd.concat([ohlc,self.get_last(n=n,symbol=symbol,freq=freq)],verify_integrity=True)
             except:
                 pass
             finally:
