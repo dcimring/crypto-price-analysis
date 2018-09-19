@@ -91,7 +91,7 @@ class HABacktester(Backtester):
         self._df['mdiff'] = self._df['ms'] - self._df['ml']
 
         # What about comparing todays average price to yesterdays
-        self._df['avg_price'] = (self._df['open'] + self._df['high'] + self._df['low'] + self._df['last']) / 4
+        self._df['avg_price'] = (self._df['open'] + self._df['last']) / 2
 
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
