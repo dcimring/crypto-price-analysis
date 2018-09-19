@@ -90,6 +90,9 @@ class HABacktester(Backtester):
         self._df['ml'] = np.round(self._df['last'].rolling(window=21).mean(), 8)
         self._df['mdiff'] = self._df['ms'] - self._df['ml']
 
+        # What about comparing todays average price to yesterdays
+        self._df['avg_price'] = (self._df['open'] + self._df['high'] + self._df['low'] + self._df['last']) / 4
+
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
         a set of stances
@@ -97,6 +100,8 @@ class HABacktester(Backtester):
 
         self._indicators()
         
+        # self._df['stance'] = np.where( (self._df['avg_price'] >= self._df['avg_price'].shift(1)) , 1, -1)
+
         self._df['stance'] = np.where( (self._df['ha_last'] >= self._df['ha_open']) , 1, 0)
 
         if not self._long_only:
