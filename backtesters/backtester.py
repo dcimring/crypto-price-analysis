@@ -292,7 +292,7 @@ class Backtester(object):
 
         days = (self._df.index[1] - self._df.index[0]).days
         secs = (self._df.index[1] - self._df.index[0]).seconds
-        periods_per_year = 365.25 / (days + secs / 3600 / 24.0)
+        periods_per_year = 365.25 / (days + secs / 3600.0 / 24.0)
 
         sharpe = math.sqrt(periods_per_year) * np.average(self._df['strategy'].dropna()) / np.std(self._df['strategy'].dropna())
         market_sharpe = math.sqrt(periods_per_year) * np.average(self._df['market'].dropna()) / np.std(self._df['market'].dropna())
