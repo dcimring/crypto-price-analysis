@@ -30,7 +30,7 @@ class MAStopLossBacktester(MABacktester):
 
         self._trailing_stop = trailing_stop
         self._EOD_only = EOD_only
-        self._freq = pd.infer_freq(series.index)
+        self._freq = pd.infer_freq(series.index[:5])
 
         if highs is None:
             self._df['high'] = series
