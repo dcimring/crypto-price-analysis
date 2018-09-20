@@ -4,6 +4,7 @@ import os
 import pandas as pd
 import pytz
 import sys
+import math
 
 if sys.version_info > (3,0): 
     import bitmex
@@ -102,7 +103,7 @@ class bitmex_utils():
         hours = int((today - last_date).seconds / (60*60))
 
         if freq=='1h':
-            n = hours
+            n = (days * 24) + hours
         elif freq=='1d':
             n = days
         else:
