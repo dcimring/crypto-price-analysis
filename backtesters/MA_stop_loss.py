@@ -80,6 +80,8 @@ class MAStopLossBacktester(MABacktester):
         self._df['ml'] = hourly['ml']
         self._df['mdiff'] = hourly['mdiff']
 
+        self._df['ml_direction'] = hourly['ml_direction']
+
     def _market_returns(self):
         
         # Override this method so that stop loss trade prices can be adjusted for
@@ -123,6 +125,7 @@ class MAStopLossBacktester(MABacktester):
             current_price = row['last']
             current_high = row['high']
             current_low = row['low']
+            ml_direction = row['ml_direction']
             
             buy_signal = False
             sell_signal = False
@@ -147,7 +150,7 @@ class MAStopLossBacktester(MABacktester):
 
                 if row['mdiff'] >= 0:
                     buy_signal = True
-                if row['mdiff'] < 0 :
+                if row['mdiff'] < 0:
                     sell_signal = True
 
                 if current_stance == 0:

@@ -53,6 +53,8 @@ class MABacktester(Backtester):
 
         self._df['mdiff'] = self._df['ms'] - self._df['ml']
 
+        self._df['ml_direction'] = self._df['ml'] - self._df['ml'].shift(1)
+
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
         a set of stances
