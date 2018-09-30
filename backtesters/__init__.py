@@ -72,3 +72,9 @@ from MA_stop_loss2 import MAStopLossBacktester2
 import HA
 reload(HA)
 from HA import HABacktester
+import vwap
+reload(vwap)
+from vwap import VWAPBacktester
+import higher
+reload(higher)
+from higher import HigherPriceBacktester
