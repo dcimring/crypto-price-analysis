@@ -73,8 +73,10 @@ class MAStopLossBacktester(MABacktester):
             daily['ml'] = np.round(daily['last'].rolling(window=self._ml).mean(), 8)
 
         daily['mdiff'] = daily['ms'] - daily['ml']
+        daily['ml_direction'] = daily['ml'] - daily['ml'].shift(1)
 
-        hourly = daily[['ms','ml','mdiff']].resample(self._freq).first().fillna(method='ffill')
+
+        hourly = daily[['ms','ml','mdiff','ml_direction']].resample(self._freq).first().fillna(method='ffill')
 
         self._df['ms'] = hourly['ms']
         self._df['ml'] = hourly['ml']
