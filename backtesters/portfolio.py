@@ -49,6 +49,13 @@ class PortfolioBacktester(Backtester):
         index = pd.DatetimeIndex(start = self._start_date, end = self._end_date, freq='d')
         self._df = pd.DataFrame(index=index, columns=['strategy','market','stance','trade']).fillna(0)
 
+    def change_data(self, series):
+        '''Propogate the new data to all strategies'''
+
+        for s in self._strategies:
+            s.change_data(series)
+
+        self._has_run = False
 
     def __str__(self):
         r = ''

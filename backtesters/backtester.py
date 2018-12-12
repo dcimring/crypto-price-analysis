@@ -25,6 +25,15 @@ class Backtester(object):
         self._start_date = self._df.index[0].strftime('%Y-%m-%d')
         self._end_date = self._df.index[-1].strftime('%Y-%m-%d')
 
+    def change_data(self, series):
+        '''Allow the price data to be changed after the strategy is initialised'''
+        self._df = series.to_frame().dropna()
+        self._df.columns = ['last']
+        self._results = {}
+        self._has_run = False
+        self._start_date = self._df.index[0].strftime('%Y-%m-%d')
+        self._end_date = self._df.index[-1].strftime('%Y-%m-%d')
+
     def __str__(self):
         '''Each concreate class will have its own string representation
         '''
