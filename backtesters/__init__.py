@@ -78,3 +78,6 @@ from vwap import VWAPBacktester
 import higher
 reload(higher)
 from higher import HigherPriceBacktester
+import MA_live_optimise
+reload(MA_live_optimise)
+from MA_live_optimise import MALiveOptimiseBacktester
