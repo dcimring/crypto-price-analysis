@@ -16,7 +16,7 @@ class Backtester(object):
     long_only: (boolean) True if the strategy can only go long
     '''
 
-    def __init__(self, series, long_only=False):
+    def __init__(self, series, long_only=False, slippage=0):
         self._df = series.to_frame().dropna()
         self._df.columns = ['last']
         self._long_only = long_only
@@ -24,6 +24,7 @@ class Backtester(object):
         self._has_run = False
         self._start_date = self._df.index[0].strftime('%Y-%m-%d')
         self._end_date = self._df.index[-1].strftime('%Y-%m-%d')
+        self._slippage = slippage
 
     def change_data(self, series):
         '''Allow the price data to be changed after the strategy is initialised'''
@@ -278,17 +279,21 @@ class Backtester(object):
         self._trade_logic()
         self._market_returns()
 
+        # apply slippage
+        # If I trade today and stance == 1 then reduce market return 
+        self._df['trade'] = np.where(self._df['stance'] != self._df['stance'].shift(1).fillna(0), 1, 0)
+        self._df['market_adj'] = self._df['market'] - (self._df['trade'].shift(1) * self._slippage * self._df['stance'].shift(1))       
+
         # If I get a buy trigger today then I can buy at todays close (tomorrow's open) and thus get tomorrow's return
 
-        self._df['strategy'] = self._df['market'] * self._df['stance'].shift(1) #shift(1) means day before
+        self._df['strategy'] = self._df['market_adj'] * self._df['stance'].shift(1) #shift(1) means day before
         self._df['strategy_last'] = self._df['strategy'].cumsum().apply(np.exp).dropna()
 
         # since we are using log returns multiplying by -1 for shorts works
 
         start_date, end_date = self._df.index[0], self._df.index[-1]
         years = (end_date - start_date).days / 365.25
-
-        self._df['trade'] = np.where(self._df['stance'] != self._df['stance'].shift(1).fillna(0), 1, 0)
+        
         trades = self._df['trade'].sum()
         market = ((np.exp(self._df['market'].cumsum()[-1]) - 1) * 100)
         market_pa = ((market / 100 + 1) ** (1 / years) - 1) * 100
@@ -318,9 +323,14 @@ class Backtester(object):
         else:
             unrealised = 0
 
+        if 0 in self._df.stance.value_counts().index:
+            time_in_market = 1 - float(self._df.stance.value_counts()[0]) / float(self._df.stance.count())
+        else:
+            time_in_market = 1
+
         self._results = {"Strategy":np.round(strategy,2), "Market":np.round(market,2),"Trades":trades,"Sharpe":np.round(sharpe,2),
                         "Strategy_pa": np.round(strategy_pa,2), "Market_pa": np.round(market_pa,2), "Years": np.round(years,2),
                         "Trades_per_month":np.round(trades/years/12,2),"Market_sharpe":np.round(market_sharpe,2),
-                        'Current_stance':current_stance,"Unrealised":np.round(unrealised,2)}
+                        'Current_stance':current_stance,"Unrealised":np.round(unrealised,2),'Time_in_market':time_in_market}
         self._has_run = True
 
