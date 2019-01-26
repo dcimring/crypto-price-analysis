@@ -108,5 +108,12 @@ class BollingerMomentum(Backtester):
 
         self._df['stance'] = stances
         
-        
+    
+    def _run(self):
+        '''Add time in market'''
+
+        super(BollingerMomentum,self)._run()
+
+        time_in_market = 1 - float(self._df.stance.value_counts()[0]) / float(self._df.stance.count())
+        self._results['Time_in_market'] = np.round(time_in_market * 100,2)
 
