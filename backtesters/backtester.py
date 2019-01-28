@@ -282,7 +282,8 @@ class Backtester(object):
         # apply slippage
         # If I trade today and stance == 1 then reduce market return 
         self._df['trade'] = np.where(self._df['stance'] != self._df['stance'].shift(1).fillna(0), 1, 0)
-        self._df['market_adj'] = self._df['market'] - (self._df['trade'].shift(1) * self._slippage * self._df['stance'].shift(1))       
+        self._df['trade_size'] = np.abs(self._df['stance'] - self._df['stance'].shift(1).fillna(0))
+        self._df['market_adj'] = self._df['market'] - (self._df['trade_size'].shift(1) * self._slippage * self._df['stance'].shift(1))       
 
         # If I get a buy trigger today then I can buy at todays close (tomorrow's open) and thus get tomorrow's return
 
