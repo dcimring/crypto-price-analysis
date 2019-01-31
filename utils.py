@@ -54,7 +54,7 @@ class bitmex_utils():
     api_key and api_secret need to be stored in environment variables as BITMEX_API_KEY and BITMEX_API_SECRET
     '''
     def __init__(self):
-        api_key, api_secret = os.environ['BITMEX_API_KEY'], os.environ['BITMEX_API_SECRET']
+        api_key, api_secret = os.environ['BITMEX_API_KEY_TEST'], os.environ['BITMEX_API_SECRET_TEST']
         self.client = bitmex.bitmex(test=True, api_key=api_key, api_secret=api_secret)
 
     def get_last(self,symbol='XBTUSD',n=1,freq='1d'):
@@ -118,4 +118,8 @@ class bitmex_utils():
                 ohlc.to_hdf('bitmex',name,format='table')
 
         return ohlc
+
+def client(self):
+
+    return self.client
 
