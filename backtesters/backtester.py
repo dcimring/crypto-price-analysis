@@ -329,11 +329,17 @@ class Backtester(object):
         else:
             time_in_market = 1
 
+        time_long = float(self._df.stance.value_counts()[1]) / float(self._df.stance.count())
+        time_short = float(self._df.stance.value_counts()[-1]) / float(self._df.stance.count())
+
         time_in_market = np.round(time_in_market * 100, 2)
+        time_long = np.round(time_long * 100, 2)
+        time_short = np.round(time_short * 100, 2)
 
         self._results = {"Strategy":np.round(strategy,2), "Market":np.round(market,2),"Trades":trades,"Sharpe":np.round(sharpe,2),
                         "Strategy_pa": np.round(strategy_pa,2), "Market_pa": np.round(market_pa,2), "Years": np.round(years,2),
                         "Trades_per_month":np.round(trades/years/12,2),"Market_sharpe":np.round(market_sharpe,2),
-                        'Current_stance':current_stance,"Unrealised":np.round(unrealised,2),'Time_in_market':time_in_market}
+                        'Current_stance':current_stance,"Unrealised":np.round(unrealised,2),'Time_in_market':time_in_market,
+                        'Time_long':time_long, 'Time_short': time_short}
         self._has_run = True
 
