@@ -18,11 +18,11 @@ class RSIBacktester(Backtester):
     long_only: (boolean) True if the strategy can only go long
     '''
 
-    def __init__(self, series, lookback=14, buy_on=70, sell_on=30, long_only=False):
+    def __init__(self, series, lookback=14, buy_on=70, sell_on=30, long_only=False, slippage=0):
         self._lookback=lookback
         self._buy_on=buy_on
         self._sell_on=sell_on
-        super(RSIBacktester,self).__init__(series,long_only=long_only)
+        super(RSIBacktester,self).__init__(series,long_only=long_only,slippage=slippage)
 
     def __str__(self):
         return "RSI Backtest Strategy (lookback=%d, buy_on=%d, sell_on=%d, long_only=%s, start=%s, end=%s)" % (

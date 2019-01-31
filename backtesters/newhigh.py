@@ -18,10 +18,10 @@ class NewHighBacktester(Backtester):
     long_only: (boolean) True if the strategy can only go long
     '''
 
-    def __init__(self, series, lookback=7, tolerance=0.05, long_only=False):
+    def __init__(self, series, lookback=7, tolerance=0.05, long_only=False, slippage=0):
         self._lookback = lookback
         self._tolerance = tolerance
-        super(NewHighBacktester,self).__init__(series,long_only=long_only)
+        super(NewHighBacktester,self).__init__(series,long_only=long_only,slippage=slippage)
             
 
     def __str__(self):

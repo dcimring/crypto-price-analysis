@@ -18,9 +18,9 @@ class HigherPriceBacktester(Backtester):
     long_only: (boolean) True if the strategy can only go long
     '''
 
-    def __init__(self, series, lookback=7, long_only=False):
+    def __init__(self, series, lookback=7, long_only=False, slippage=0):
         self._lookback = lookback
-        super(HigherPriceBacktester,self).__init__(series,long_only=long_only)
+        super(HigherPriceBacktester,self).__init__(series,long_only=long_only,slippage=slippage)
 
     def __str__(self):
         return "Higher Price Backtest Strategy (ms=%d, ml=%d, ema=%s, long_only=%s, start=%s, end=%s)" % (

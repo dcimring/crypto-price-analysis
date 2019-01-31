@@ -23,8 +23,9 @@ class MajoritySignalBacktester(PortfolioBacktester):
     weights: (list) optional list of weights, if None then equal weights assumed
     '''
 
-    def __init__(self, strategies=None, weights=None):
+    def __init__(self, strategies=None, weights=None, slippage=0):
         
+        self._slippage = slippage
         super(MajoritySignalBacktester,self).__init__(strategies=strategies, weights=weights)
 
     def plot(self, start_date=None, end_date=None, figsize=None, ax=None):
@@ -60,7 +61,11 @@ class MajoritySignalBacktester(PortfolioBacktester):
         self._df['stance'] = np.where(self._df['stance'] > 0,1,self._df['stance'])
 
         self._df['trade'] = np.where(self._df['stance'] != self._df['stance'].shift(1).fillna(0), 1, 0)
-        self._df['strategy'] = self._df['market'] * self._df['stance'].shift(1) #shift(1) means day before
+
+        self._df['trade_size'] = np.abs(self._df['stance'] - self._df['stance'].shift(1).fillna(0))
+        self._df['market_adj'] = self._df['market'] - (self._df['trade_size'].shift(1) * self._slippage * self._df['stance'].shift(1))       
+
+        self._df['strategy'] = self._df['market_adj'] * self._df['stance'].shift(1) #shift(1) means day before, mark_adj takes slippage into account
 
         # needed for chart
         #self._df['last'] = self._df['market'].cumsum().apply(np.exp).dropna()

@@ -122,9 +122,17 @@ class PortfolioBacktester(Backtester):
         else:
             unrealised = 0
 
+        if 0 in self._df.stance.value_counts().index:
+            time_in_market = 1 - float(self._df.stance.value_counts()[0]) / float(self._df.stance.count())
+        else:
+            time_in_market = 1
+
+        time_in_market = np.round(time_in_market * 100, 2)
+
         self._results = {"Strategy":np.round(strategy,2), "Market":np.round(market,2),"Trades":trades,"Sharpe":np.round(sharpe,2),
                         "Strategy_pa": np.round(strategy_pa,2), "Market_pa": np.round(market_pa,2), "Years": np.round(years,2),
                         "Trades_per_month":np.round(trades/years/12,2),"Market_sharpe":np.round(market_sharpe,2),
-                        'Current_stance':current_stance,"Unrealised":np.round(unrealised,2)}
+                        'Current_stance':current_stance,"Unrealised":np.round(unrealised,2), 'Time_in_market':time_in_market}
+
         self._has_run = True
 

@@ -24,9 +24,9 @@ class MAStopLossBacktester(MABacktester):
     EOD_only (boolean) True if you make trades only at end of day
     '''
 
-    def __init__(self, series, highs=None, lows=None, ms=1, ml=10, ema=False, stop_loss = 0.05, trailing_stop=False, EOD_only=True):
+    def __init__(self, series, highs=None, lows=None, ms=1, ml=10, ema=False, stop_loss = 0.05, trailing_stop=False, EOD_only=True, slippage=0):
         self._stop_loss = stop_loss
-        super(MAStopLossBacktester,self).__init__(series,ms=ms,ml=ml,long_only=False,ema=ema)
+        super(MAStopLossBacktester,self).__init__(series,ms=ms,ml=ml,long_only=False,ema=ema,slippage=slippage)
 
         self._trailing_stop = trailing_stop
         self._EOD_only = EOD_only

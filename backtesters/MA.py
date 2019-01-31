@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import talib
 from backtester import Backtester
 
 class MABacktester(Backtester):
@@ -19,11 +20,11 @@ class MABacktester(Backtester):
     ema: (boolean) True if you want exponential MA's
     '''
 
-    def __init__(self, series, ms=1, ml=10, long_only=False, ema=False):
+    def __init__(self, series, ms=1, ml=10, long_only=False, ema=False, slippage=0):
         self._ms = ms
         self._ml = ml
         self._ema = ema
-        super(MABacktester,self).__init__(series,long_only=long_only)
+        super(MABacktester,self).__init__(series,long_only=long_only, slippage=slippage)
 
     def __str__(self):
         return "MA Backtest Strategy (ms=%d, ml=%d, ema=%s, long_only=%s, start=%s, end=%s)" % (
@@ -55,6 +56,10 @@ class MABacktester(Backtester):
 
         self._df['ml_direction'] = self._df['ml'] - self._df['ml'].shift(1)
 
+        # Add bolinger bands
+        self._df['upper'], self._df['middle'], self._df['lower'] = talib.BBANDS(self._df['last'],
+            timeperiod=self._ml, nbdevup=0.5,nbdevdn=0.5)
+
     def _trade_logic(self):
         '''Implements the trade logic in order to come up with
         a set of stances
@@ -66,5 +71,7 @@ class MABacktester(Backtester):
 
         if not self._long_only:
             self._df['stance'] = np.where(self._df['mdiff'] < 0, -1, self._df['stance'])
-        
+
+        # if bollinger inside then remain flat
+        #self._df['stance'] = np.where( (self._df['last'] <= self._df['upper']) & (self._df['last'] >= self._df['lower']), 0, self._df['stance'])        
 

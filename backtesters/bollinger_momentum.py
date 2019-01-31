@@ -23,10 +23,10 @@ class BollingerMomentum(Backtester):
     distance : (float) number of std deviations for the band
     '''
 
-    def __init__(self, series, lookback=14, distance=2):
+    def __init__(self, series, lookback=14, distance=2, slippage=0):
         self._lookback = lookback
         self._distance = distance
-        super(BollingerMomentum,self).__init__(series,long_only=False)
+        super(BollingerMomentum,self).__init__(series,long_only=False,slippage=slippage)
 
     def __str__(self):
         return "Bollinger Momentum Backtest (lookback=%d, distance=%0.1f, start=%s, end=%s)" % (

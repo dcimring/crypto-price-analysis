@@ -9,6 +9,9 @@ import seaborn as sns
 from matplotlib.finance import candlestick2_ohlc
 import math
 from backtester import Backtester
+import indicators.heikenashi
+reload(indicators.heikenashi)
+from indicators.heikenashi import HeikenAshi
 
 class HABacktester(Backtester):
     '''Backtest a Heikin Ashi strategy
@@ -22,8 +25,8 @@ class HABacktester(Backtester):
     long_only (Boolean) True if you can go long only (no shorts)
     '''
 
-    def __init__(self, series, opens, highs, lows, long_only=False):
-        super(HABacktester,self).__init__(series,long_only=long_only)
+    def __init__(self, series, opens, highs, lows, long_only=False, slippage=0):
+        super(HABacktester,self).__init__(series,long_only=long_only, slippage=slippage)
         self._df['open'] = opens
         self._df['high'] = highs
         self._df['low'] = lows
@@ -47,43 +50,13 @@ class HABacktester(Backtester):
         candlestick2_ohlc(ax,temp['ha_open'],temp['ha_high'],temp['ha_low'],temp['ha_last'],width=0.6, colorup='#77d879', colordown='#db3f3f')
 
     def _indicators(self):
-
-        # See https://github.com/joosthoeks/jhTAlib/blob/master/jhtalib/data/data.py
-        # And https://stackoverflow.com/questions/40613480/heiken-ashi-using-pandas-python
-        # And https://quantiacs.com/Blog/Intro-to-Algorithmic-Trading-with-Heikin-Ashi.aspx
-        # And https://github.com/Quantiacs/HeikinAshi/blob/master/heikinAshi.py
-
-        # HA open = yesterday's (O+C)/2
-        # But do you use O and C price from yesterday or do you use O and C HA values from yesterday?
-        # Comparing to TradingView it seems using yesterdays HA values is a better match for their chart
-
-        ha_Open_list = []
-        ha_High_list = []
-        ha_Low_list = []
-        ha_Close_list = []
-        i = 0
-        while i < len(self._df['last']):
-            if i is 0:
-                ha_Open = (self._df['open'][i] + self._df['last'][i]) / 2
-                ha_Close = (self._df['open'][i] + self._df['high'][i] + self._df['low'][i] + self._df['last'][i]) / 4
-                ha_High = self._df['high'][i]
-                ha_Low = self._df['low'][i]
-            else:
-                ha_Open = (ha_Open_list[i - 1] + ha_Close_list[i - 1]) / 2
-                #ha_Open = (self._df['open'][i] + self._df['open'][i-1]) / 2
-                ha_Close = (self._df['open'][i] + self._df['high'][i] + self._df['low'][i] + self._df['last'][i]) / 4
-                ha_High = max([self._df['high'][i], ha_Open, ha_Close])
-                ha_Low = min([self._df['low'][i], ha_Open, ha_Close])
-            ha_Open_list.append(ha_Open)
-            ha_High_list.append(ha_High)
-            ha_Low_list.append(ha_Low)
-            ha_Close_list.append(ha_Close)
-            i += 1
         
-        self._df['ha_open'] = ha_Open_list
-        self._df['ha_last'] = ha_Close_list
-        self._df['ha_low'] = ha_Low_list
-        self._df['ha_high'] = ha_High_list
+        ha = HeikenAshi(self._df[['last','open','high','low']])
+
+        self._df['ha_open'] = ha['ha_open']
+        self._df['ha_last'] = ha['ha_last']
+        self._df['ha_low'] = ha['ha_low']
+        self._df['ha_high'] = ha['ha_high']
 
         # Try adding MA crossover as well
         self._df['ms'] = np.round(self._df['last'].rolling(window=10).mean(), 8)

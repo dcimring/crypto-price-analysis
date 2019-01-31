@@ -20,11 +20,11 @@ class MAAssymetricBacktester(Backtester):
     ema: (boolean) True if you want exponential MA's
     '''
 
-    def __init__(self, series, short_on=7, long_on=4, ema=False):
+    def __init__(self, series, short_on=7, long_on=4, ema=False, slippage=0):
         self._short_on = short_on
         self._long_on = long_on
         self._ema = ema
-        super(MAAssymetricBacktester,self).__init__(series,long_only=False)
+        super(MAAssymetricBacktester,self).__init__(series,long_only=False,slippage=slippage)
 
     def __str__(self):
         return "MA Assymetric Backtest Strategy (short_on=%d, long_on=%d, ema=%s, long_only=%s, start=%s, end=%s)" % (
