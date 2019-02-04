@@ -132,7 +132,8 @@ class PortfolioBacktester(Backtester):
         self._results = {"Strategy":np.round(strategy,2), "Market":np.round(market,2),"Trades":trades,"Sharpe":np.round(sharpe,2),
                         "Strategy_pa": np.round(strategy_pa,2), "Market_pa": np.round(market_pa,2), "Years": np.round(years,2),
                         "Trades_per_month":np.round(trades/years/12,2),"Market_sharpe":np.round(market_sharpe,2),
-                        'Current_stance':current_stance,"Unrealised":np.round(unrealised,2), 'Time_in_market':time_in_market}
+                        'Current_stance':current_stance,"Unrealised":np.round(unrealised,2), 'Time_in_market':time_in_market,
+                        'Start_date': self._start_date, 'End_date': self._end_date}
 
         self._has_run = True
 
