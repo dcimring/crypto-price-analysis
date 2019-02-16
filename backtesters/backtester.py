@@ -22,6 +22,7 @@ class Backtester(object):
         self._long_only = long_only
         self._results = {}
         self._has_run = False
+        self._trades = []
         self._start_date = self._df.index[0].strftime('%Y-%m-%d')
         self._end_date = self._df.index[-1].strftime('%Y-%m-%d')
         self._slippage = slippage
@@ -32,6 +33,7 @@ class Backtester(object):
         self._df.columns = ['last']
         self._results = {}
         self._has_run = False
+        self._trades = []
         self._start_date = self._df.index[0].strftime('%Y-%m-%d')
         self._end_date = self._df.index[-1].strftime('%Y-%m-%d')
 
@@ -64,10 +66,34 @@ class Backtester(object):
         return ( (a < b) & (a.shift(1) > b.shift(1) ) ) 
 
 
+    def trade_dist(self, figsize=None, ax=None, bins=20, width=1.5):
+        '''Draw a chart of the trade length distribution showing the mean and the shape of the distrubution
+        '''
+
+        trades = self.trades()
+        days = trades['Days']
+
+        if not ax:
+            fig, ax = plt.subplots(figsize=figsize)
+
+        days.plot.hist(bins=bins, title='Trade Length Distribution', width=width, ax=ax)
+        plt.xticks(list(plt.xticks()[0]) + [int(days.mean())])
+        plt.xlim(left=0)
+        plt.xlabel('Days')
+        plt.axvline(days.mean(), color='r', linestyle='dashed', linewidth=1);
+
+        return ax
+
+
     def trades(self):
         '''Return a Pandas DataFrame with details of each trade
         '''
+
+        if len(self._trades) > 0:
+            return self._trades
+
         self._make_sure_has_run()
+
         buy = self._df['buy'].dropna()
         sell = self._df['sell'].dropna()
         r = []
@@ -111,7 +137,9 @@ class Backtester(object):
         df['Return%'] = np.round(df['Return%'] * 100,2)
         df.set_index('Date', inplace=True)
 
-        return df
+        self._trades = df # store for next time
+
+        return self._trades
 
     def plot(self, start_date=None, end_date=None, figsize=None, ax=None):
         '''Plot of prices and the the buy and sell points
