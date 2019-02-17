@@ -43,8 +43,8 @@ class PortfolioBacktester(Backtester):
             start_dates.append(s._df.index[0]) # .replace(tzinfo=None)
             end_dates.append(s._df.index[-1]) # .replace(tzinfo=None)
 
-        self._start_date = min(start_dates)
-        self._end_date = max(end_dates)
+        self._start_date = min(start_dates).strftime('%Y-%m-%d')
+        self._end_date = max(end_dates).strftime('%Y-%m-%d')
 
         index = pd.DatetimeIndex(start = self._start_date, end = self._end_date, freq='d')
         self._df = pd.DataFrame(index=index, columns=['strategy','market','stance','trade']).fillna(0)
@@ -110,17 +110,20 @@ class PortfolioBacktester(Backtester):
         sharpe = math.sqrt(365.25) * np.average(self._df['strategy'].dropna()) / np.std(self._df['strategy'].dropna())
         market_sharpe = math.sqrt(365.25) * np.average(self._df['market'].dropna()) / np.std(self._df['market'].dropna())
         
-        # Current trade unrealised profit or loss
         current_stance = self._df['stance'].iloc[-1]
-        last = self._df['last'].iloc[-1]
-        if current_stance == 1:
-            entry = self._df['buy'].dropna()[-1]
-            unrealised = (last / entry - 1) * 100
-        elif current_stance == -1:
-            entry = self._df['sell'].dropna()[-1]
-            unrealised = (entry / last - 1) * 100
-        else:
-            unrealised = 0
+
+        # # Current trade unrealised profit or loss
+        # last = self._df['last'].iloc[-1]
+        # if current_stance == 1:
+        #     entry = self._df['buy'].dropna()[-1]
+        #     unrealised = (last / entry - 1) * 100
+        # elif current_stance == -1:
+        #     entry = self._df['sell'].dropna()[-1]
+        #     unrealised = (entry / last - 1) * 100
+        # else:
+        #     unrealised = 0
+
+        unrealised = np.NAN
 
         if 0 in self._df.stance.value_counts().index:
             time_in_market = 1 - float(self._df.stance.value_counts()[0]) / float(self._df.stance.count())
