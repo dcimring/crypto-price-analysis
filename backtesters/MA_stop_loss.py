@@ -52,9 +52,14 @@ class MAStopLossBacktester(MABacktester):
         sns.set_style("white")
         ax = MABacktester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
         temp = self._df.loc[start_date:end_date]
-        ax.plot(temp['stop'],color='orange', linestyle='None', marker='o')
+        
+        if 'stop' in temp:
+            ax.plot(temp['stop'],color='orange', linestyle='None', marker='o')
+        
         ax.legend()
         plt.show()
+
+        return ax
 
 
     def _indicators(self):

@@ -35,7 +35,7 @@ class MAStopLossBacktester2(MAStopLossBacktester):
 
     def plot(self, start_date=None, end_date=None, figsize=None):
         sns.set_style("white")
-        ax = MABacktester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
+        ax = MAStopLossBacktester.plot(self,start_date=start_date,end_date=end_date,figsize=figsize)
         temp = self._df.loc[start_date:end_date]
         ax.plot(temp['stop_short'],color='orange', linestyle='None', marker='o')
         ax.plot(temp['stop_long'],color='orange', linestyle='None', marker='o')
