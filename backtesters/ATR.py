@@ -64,6 +64,7 @@ class ATRMomentum(Backtester):
 
         ax.legend()
         plt.tight_layout()
+        plt.Xlable("axe des x")
 
         plt.show()
 
